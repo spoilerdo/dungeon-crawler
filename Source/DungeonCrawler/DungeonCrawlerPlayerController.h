@@ -16,46 +16,35 @@ class ADungeonCrawlerPlayerController : public APlayerController
 public:
 	ADungeonCrawlerPlayerController();
 
-	FOnFinishRound FinishRound;
-
-	FString PlayerName = "P1";
-	
-	UPROPERTY(EditAnywhere, Category="PlayerStats", BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, Category = "PlayerStats", BlueprintReadWrite)
 	int32 Speed;
-
 	int32 MaxDistance;
+
+	// Round based system variables
+	FOnFinishRound FinishRound;
+	FString PlayerName = "P1";
 
 private:
 	int32 SpeedToWorldMargin = 50;
+	FVector DestLocation;
+	float Distance;
+
+	bool BeginMoving = false;
 	bool IsYourRound = true;
 
 protected:
-	/** True if the controlled character should navigate to the mouse cursor. */
-	uint32 bMoveToMouseCursor : 1;
-
-	// Begin PlayerController interface
 	virtual void PlayerTick(float DeltaTime) override;
-	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
-	// End PlayerController interface
+	virtual void BeginPlay() override;
 
 	void BeginRound(FString name);
 
-	/** Resets HMD orientation in VR. */
-	void OnResetVR();
-
-	/** Navigate player to the current mouse cursor location. */
+	// Navigate player to the current mouse cursor location.
 	void MoveToMouseCursor();
-
-	/** Navigate player to the current touch location. */
-	void MoveToTouchLocation(const ETouchIndex::Type FingerIndex, const FVector Location);
-	
-	/** Navigate player to the given world location. */
-	void SetNewMoveDestination(const FVector DestLocation);
-
-	/** Input handlers for SetDestination action. */
-	void OnSetDestinationPressed();
-	void OnSetDestinationReleased();
+	// Navigate player to the given world location
+	void SetNewMoveDestination();
+	// Calculates distance and returns true if succesfull
+	bool CalcDistance();
 };
 
 

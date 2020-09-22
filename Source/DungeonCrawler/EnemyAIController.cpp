@@ -1,7 +1,5 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "EnemyAIController.h"
+#include "DungeonCrawlerGameMode.h"
 #include "Runtime\AIModule\Classes\Blueprint\AIBlueprintHelperLibrary.h"
 
 AEnemyAIController::AEnemyAIController() {
@@ -9,14 +7,18 @@ AEnemyAIController::AEnemyAIController() {
 }
 
 void AEnemyAIController::BeginPlay() {
-	
 	Super::BeginPlay();
 
-	FVector PlayerLocation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
-	MoveToLocation(PlayerLocation);
+	// Bind round based system event to BeginRound
+	ADungeonCrawlerGameMode* GameMode = (ADungeonCrawlerGameMode*)GetWorld()->GetAuthGameMode();
+	GameMode->ActivateRound.AddUObject(this, &AEnemyAIController::BeginRound);
+}
 
-	//Attack system
-	//Check if it misses or hits
-	//Animation
-	//Remove health from player
+void AEnemyAIController::BeginRound(FString name) {
+	if (name == Name) {
+		FVector PlayerLocation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
+		MoveToLocation(PlayerLocation);
+
+		FinishRound.Broadcast();
+	}
 }

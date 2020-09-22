@@ -14,121 +14,81 @@ ADungeonCrawlerPlayerController::ADungeonCrawlerPlayerController()
 	DefaultMouseCursor = EMouseCursor::Crosshairs;
 }
 
-void ADungeonCrawlerPlayerController::PlayerTick(float DeltaTime)
-{
+void ADungeonCrawlerPlayerController::SetupInputComponent() {
+	// Set up gameplay key bindings
+	Super::SetupInputComponent();
+
+	InputComponent->BindAction("SetDestination", IE_Released, this, &ADungeonCrawlerPlayerController::MoveToMouseCursor);
+}
+
+void ADungeonCrawlerPlayerController::PlayerTick(float DeltaTime) {
 	Super::PlayerTick(DeltaTime);
 
-	// keep updating the destination every tick while desired
-	if (bMoveToMouseCursor)
+	// When moving check if you reached destination
+	if (BeginMoving)
 	{
-		MoveToMouseCursor();
+		if (!CalcDistance()) { return; }
+
+		// If the player reached the destination end the round
+		if (Distance <= 120.0f) {
+			BeginMoving = false;
+			FinishRound.Broadcast();
+			IsYourRound = false;
+		}
 	}
 }
 
-void ADungeonCrawlerPlayerController::BeginPlay()
-{
+void ADungeonCrawlerPlayerController::BeginPlay() {
+	Super::BeginPlay();
+
+	// Calc max distance by speed and margin
 	MaxDistance = (Speed * 100) + (Speed * 100 / 2) + SpeedToWorldMargin;
-	/*ADungeonCrawlerGameMode* GameMode = (ADungeonCrawlerGameMode*)GetWorld()->GetAuthGameMode();
-	GameMode->ActivateRound.AddUObject(this, &ADungeonCrawlerPlayerController::BeginRound);*/
+
+	// Bind round based system event to BeginRound
+	ADungeonCrawlerGameMode* GameMode = (ADungeonCrawlerGameMode*)GetWorld()->GetAuthGameMode();
+	GameMode->ActivateRound.AddUObject(this, &ADungeonCrawlerPlayerController::BeginRound);
 }
- 
-void ADungeonCrawlerPlayerController::SetupInputComponent()
-{
-	// set up gameplay key bindings
-	Super::SetupInputComponent();
 
-	InputComponent->BindAction("SetDestination", IE_Pressed, this, &ADungeonCrawlerPlayerController::OnSetDestinationPressed);
-	InputComponent->BindAction("SetDestination", IE_Released, this, &ADungeonCrawlerPlayerController::OnSetDestinationReleased);
-
-	// support touch devices 
-	InputComponent->BindTouch(EInputEvent::IE_Pressed, this, &ADungeonCrawlerPlayerController::MoveToTouchLocation);
-	InputComponent->BindTouch(EInputEvent::IE_Repeat, this, &ADungeonCrawlerPlayerController::MoveToTouchLocation);
-
-	InputComponent->BindAction("ResetVR", IE_Pressed, this, &ADungeonCrawlerPlayerController::OnResetVR);
-}
 
 void ADungeonCrawlerPlayerController::BeginRound(FString name) {
-	UE_LOG(LogTemp, Warning, TEXT("BEGIN PLAYING"));
 	if (name == PlayerName) {
 		IsYourRound = true;
 	}
 }
 
-void ADungeonCrawlerPlayerController::OnResetVR()
-{
-	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
-}
+// Activates when mouse button press is released
+void ADungeonCrawlerPlayerController::MoveToMouseCursor() {
+	if (!IsYourRound) { return; }
 
-void ADungeonCrawlerPlayerController::MoveToMouseCursor()
-{
-	//if (!IsYourRound) { return; }
+	// Trace to see what is under the mouse cursor
+	FHitResult Hit;
+	GetHitResultUnderCursor(ECC_Visibility, false, Hit);
 
-	if (UHeadMountedDisplayFunctionLibrary::IsHeadMountedDisplayEnabled())
-	{
-		if (ADungeonCrawlerCharacter* MyPawn = Cast<ADungeonCrawlerCharacter>(GetPawn()))
-		{
-			if (MyPawn->GetCursorToWorld())
-			{
-				UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, MyPawn->GetCursorToWorld()->GetComponentLocation());
-			}
-		}
-	}
-	else
-	{
-		// Trace to see what is under the mouse cursor
-		FHitResult Hit;
-		GetHitResultUnderCursor(ECC_Visibility, false, Hit);
-
-		if (Hit.bBlockingHit)
-		{
-			// We hit something, move there
-			SetNewMoveDestination(Hit.ImpactPoint);
-		}
-	}
-
-	FinishRound.Broadcast();
-}
-
-void ADungeonCrawlerPlayerController::MoveToTouchLocation(const ETouchIndex::Type FingerIndex, const FVector Location)
-{
-	//if (!IsYourRound) { return; }
-
-	FVector2D ScreenSpaceLocation(Location);
-
-	// Trace to see what is under the touch location
-	FHitResult HitResult;
-	GetHitResultAtScreenPosition(ScreenSpaceLocation, CurrentClickTraceChannel, true, HitResult);
-	if (HitResult.bBlockingHit)
+	if (Hit.bBlockingHit)
 	{
 		// We hit something, move there
-		SetNewMoveDestination(HitResult.ImpactPoint);
+		DestLocation = Hit.ImpactPoint;
+		SetNewMoveDestination();
 	}
-
-	FinishRound.Broadcast();
 }
 
-void ADungeonCrawlerPlayerController::SetNewMoveDestination(const FVector DestLocation)
-{
-	APawn* const MyPawn = GetPawn();
-	if (MyPawn)
+void ADungeonCrawlerPlayerController::SetNewMoveDestination() {
+	if (!CalcDistance()) { return; }
+	// We need to issue move command only if far enough in order for walk animation to play correctly
+	if (Distance > 120.0f && Distance <= MaxDistance)
 	{
-		float const Distance = FVector::Dist(DestLocation, MyPawn->GetActorLocation());
-		// We need to issue move command only if far enough in order for walk animation to play correctly
-		if (Distance > 120.0f && Distance <= MaxDistance)
-		{
-			UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, DestLocation);
-		}
+		// Begin moving so start tracking the distance the player needs yet to walk/ run
+		BeginMoving = true;
+		UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, DestLocation);
 	}
 }
 
-void ADungeonCrawlerPlayerController::OnSetDestinationPressed()
-{
-	// set flag to keep updating destination until released
-	bMoveToMouseCursor = true;
-}
+bool ADungeonCrawlerPlayerController::CalcDistance() {
+	APawn* const MyPawn = GetPawn();
+	if (MyPawn) {
+		Distance = FVector::Dist(DestLocation, MyPawn->GetActorLocation());
+		return true;
+	}
 
-void ADungeonCrawlerPlayerController::OnSetDestinationReleased()
-{
-	// clear flag to indicate we should stop updating the destination
-	bMoveToMouseCursor = false;
+	return false;
 }
