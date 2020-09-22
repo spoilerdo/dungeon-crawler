@@ -6,6 +6,8 @@
 #include "GameFramework/PlayerController.h"
 #include "DungeonCrawlerPlayerController.generated.h"
 
+DECLARE_EVENT(ADungeonCrawlerPlayerController, FOnFinishRound)
+
 UCLASS()
 class ADungeonCrawlerPlayerController : public APlayerController
 {
@@ -13,6 +15,10 @@ class ADungeonCrawlerPlayerController : public APlayerController
 
 public:
 	ADungeonCrawlerPlayerController();
+
+	FOnFinishRound FinishRound;
+
+	FString PlayerName = "P1";
 	
 	UPROPERTY(EditAnywhere, Category="PlayerStats", BlueprintReadWrite)
 	int32 Speed;
@@ -21,6 +27,7 @@ public:
 
 private:
 	int32 SpeedToWorldMargin = 50;
+	bool IsYourRound = true;
 
 protected:
 	/** True if the controlled character should navigate to the mouse cursor. */
@@ -31,6 +38,8 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 	// End PlayerController interface
+
+	void BeginRound(FString name);
 
 	/** Resets HMD orientation in VR. */
 	void OnResetVR();

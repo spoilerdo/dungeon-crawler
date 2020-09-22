@@ -4,6 +4,7 @@
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Runtime/Engine/Classes/Components/DecalComponent.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
+#include "DungeonCrawlerGameMode.h"
 #include "DungeonCrawlerCharacter.h"
 #include "Engine/World.h"
 
@@ -27,8 +28,10 @@ void ADungeonCrawlerPlayerController::PlayerTick(float DeltaTime)
 void ADungeonCrawlerPlayerController::BeginPlay()
 {
 	MaxDistance = (Speed * 100) + (Speed * 100 / 2) + SpeedToWorldMargin;
+	/*ADungeonCrawlerGameMode* GameMode = (ADungeonCrawlerGameMode*)GetWorld()->GetAuthGameMode();
+	GameMode->ActivateRound.AddUObject(this, &ADungeonCrawlerPlayerController::BeginRound);*/
 }
-
+ 
 void ADungeonCrawlerPlayerController::SetupInputComponent()
 {
 	// set up gameplay key bindings
@@ -44,6 +47,13 @@ void ADungeonCrawlerPlayerController::SetupInputComponent()
 	InputComponent->BindAction("ResetVR", IE_Pressed, this, &ADungeonCrawlerPlayerController::OnResetVR);
 }
 
+void ADungeonCrawlerPlayerController::BeginRound(FString name) {
+	UE_LOG(LogTemp, Warning, TEXT("BEGIN PLAYING"));
+	if (name == PlayerName) {
+		IsYourRound = true;
+	}
+}
+
 void ADungeonCrawlerPlayerController::OnResetVR()
 {
 	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
@@ -51,6 +61,8 @@ void ADungeonCrawlerPlayerController::OnResetVR()
 
 void ADungeonCrawlerPlayerController::MoveToMouseCursor()
 {
+	//if (!IsYourRound) { return; }
+
 	if (UHeadMountedDisplayFunctionLibrary::IsHeadMountedDisplayEnabled())
 	{
 		if (ADungeonCrawlerCharacter* MyPawn = Cast<ADungeonCrawlerCharacter>(GetPawn()))
@@ -73,10 +85,14 @@ void ADungeonCrawlerPlayerController::MoveToMouseCursor()
 			SetNewMoveDestination(Hit.ImpactPoint);
 		}
 	}
+
+	FinishRound.Broadcast();
 }
 
 void ADungeonCrawlerPlayerController::MoveToTouchLocation(const ETouchIndex::Type FingerIndex, const FVector Location)
 {
+	//if (!IsYourRound) { return; }
+
 	FVector2D ScreenSpaceLocation(Location);
 
 	// Trace to see what is under the touch location
@@ -87,6 +103,8 @@ void ADungeonCrawlerPlayerController::MoveToTouchLocation(const ETouchIndex::Typ
 		// We hit something, move there
 		SetNewMoveDestination(HitResult.ImpactPoint);
 	}
+
+	FinishRound.Broadcast();
 }
 
 void ADungeonCrawlerPlayerController::SetNewMoveDestination(const FVector DestLocation)

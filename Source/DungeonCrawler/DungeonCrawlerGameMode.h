@@ -6,6 +6,8 @@
 #include "GameFramework/GameModeBase.h"
 #include "DungeonCrawlerGameMode.generated.h"
 
+DECLARE_EVENT_OneParam(ADungeonCrawlerGameMode, FOnActivateRound, FString);
+
 UCLASS(minimalapi)
 class ADungeonCrawlerGameMode : public AGameModeBase
 {
@@ -13,6 +15,17 @@ class ADungeonCrawlerGameMode : public AGameModeBase
 
 public:
 	ADungeonCrawlerGameMode();
+
+	FOnActivateRound ActivateRound;
+
+	UPROPERTY(EditAnywhere, Category = "Round base stats")
+	TArray<FString> rounds;
+private:
+	void PlayRound();
+	void EndRound();
+
+protected:
+	virtual void StartPlay() override;
 };
 
 
