@@ -25,14 +25,14 @@ void ADungeonCrawlerPlayerController::PlayerTick(float DeltaTime) {
 	Super::PlayerTick(DeltaTime);
 
 	// When moving check if you reached destination
-	if (BeginMoving)
-	{
+	if (BeginMoving) {
 		if (!CalcDistance()) { return; }
 
 		// If the player reached the destination end the round
 		if (Distance <= 120.0f) {
 			BeginMoving = false;
 			FinishRound.Broadcast();
+			FinishRound.Clear();
 			IsYourRound = false;
 		}
 	}

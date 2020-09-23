@@ -1,8 +1,10 @@
 #include "DungeonCrawlerGameMode.h"
 #include "DungeonCrawlerPlayerController.h"
+#include "EnemyAIController.h"
 #include "DungeonCrawlerCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Runtime\Engine\Classes\Kismet\GameplayStatics.h"
+#include "Blueprint/AIBlueprintHelperLibrary.h"
 
 ADungeonCrawlerGameMode::ADungeonCrawlerGameMode() {
 	// Use custom PlayerController class
@@ -28,18 +30,27 @@ void ADungeonCrawlerGameMode::StartPlay() {
 
 void ADungeonCrawlerGameMode::PlayRound() {
 	// Check if rounds are ended if it is, reset it
-	if (index > rounds.Num()) { index = 0; }
+	if (index >= rounds.Num()) { index = 0; }
 
 	// Get next player
 	TArray<AActor*> foundActors;
 	UGameplayStatics::GetAllActorsWithTag(GetWorld(), *rounds[index], foundActors);
 
 	if (foundActors.Num() > 0) {
-		const AActor* actor = foundActors[0];
-		ADungeonCrawlerPlayerController* PC = Cast<ADungeonCrawlerPlayerController>(UGameplayStatics::GetPlayerController(actor, 0));
-		if (PC != NULL) {
-			// Bind the player's end round event to EndRound
-			PC->FinishRound.AddUObject(this, &ADungeonCrawlerGameMode::EndRound);
+		AActor* actor = foundActors[0];
+		
+		if (rounds[index].Contains("P")) {
+			ADungeonCrawlerPlayerController* PC = Cast<ADungeonCrawlerPlayerController>(UGameplayStatics::GetPlayerController(actor, 0));
+			if (PC != NULL) {
+				// Bind the player's end round event to EndRound
+				PC->FinishRound.AddUObject(this, &ADungeonCrawlerGameMode::EndRound);
+			}
+		}
+		else {
+			AEnemyAIController* AC = Cast<AEnemyAIController>(UAIBlueprintHelperLibrary::GetAIController(actor));
+			if (AC != NULL) {
+				AC->FinishRound.AddUObject(this, &ADungeonCrawlerGameMode::EndRound);
+			}
 		}
 
 		// Activate the round by broadcasting event to all controllers

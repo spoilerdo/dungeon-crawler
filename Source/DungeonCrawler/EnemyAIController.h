@@ -6,7 +6,7 @@
 #include "AIController.h"
 #include "EnemyAIController.generated.h"
 
-DECLARE_EVENT(AEnemyAIController, FOnFinishRound)
+DECLARE_EVENT(AEnemyAIController, FOnFinishAIRound)
 
 UCLASS()
 class DUNGEONCRAWLER_API AEnemyAIController : public AAIController
@@ -17,13 +17,20 @@ public:
 	AEnemyAIController();
 
 	// Round based system variables
-	FOnFinishRound FinishRound;
+	FOnFinishAIRound FinishRound;
 	FString Name = "E1";
 private:
-	bool IsYourRound = false;
+	FVector DestLocation;
+	float Distance;
+
+	bool BeginMoving = false;
 
 protected:
+	virtual void Tick(float DeltaTime) override;
 	virtual void BeginPlay() override;
 
 	void BeginRound(FString name);
+
+	// Calculates distance and returns true if sucessfull
+	bool CalcDistance();
 };
