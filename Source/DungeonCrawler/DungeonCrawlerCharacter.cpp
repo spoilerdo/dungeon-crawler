@@ -88,7 +88,12 @@ void ADungeonCrawlerCharacter::Tick(float DeltaSeconds)
 			FRotator CursorR = CursorFV.Rotation();
 			CursorToWorld->SetWorldLocation(TraceHitResult.Location);
 			CursorToWorld->SetWorldRotation(CursorR);
-			CalculateDecal(PC->MaxDistance);
+			if (PC->CurrentAction == 'M') {
+				CalculateDecal(PC->Speed); 
+			}
+			else {
+				CalculateDecal(PC->AttackRange);
+			}
 		}
 	}
 }

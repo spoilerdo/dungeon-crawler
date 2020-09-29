@@ -19,21 +19,22 @@ void ADungeonCrawlerPlayerController::SetupInputComponent() {
 	Super::SetupInputComponent();
 
 	InputComponent->BindAction("SetDestination", IE_Released, this, &ADungeonCrawlerPlayerController::MoveToMouseCursor);
+	InputComponent->BindAction("SetAttackGoal", IE_Released, this, &ADungeonCrawlerPlayerController::SetAttackGoal);
 }
 
 void ADungeonCrawlerPlayerController::PlayerTick(float DeltaTime) {
 	Super::PlayerTick(DeltaTime);
 
 	// When moving check if you reached destination
-	if (BeginMoving) {
+	if (CurrentAction == 'M') {
 		if (!CalcDistance()) { return; }
 
 		// If the player reached the destination end the round
 		if (Distance <= 120.0f) {
-			BeginMoving = false;
-			FinishRound.Broadcast();
-			FinishRound.Clear();
-			IsYourRound = false;
+			CurrentAction = 'A';
+			//FinishRound.Broadcast();
+			//FinishRound.Clear();
+			//IsYourRound = false;
 		}
 	}
 }
@@ -41,31 +42,32 @@ void ADungeonCrawlerPlayerController::PlayerTick(float DeltaTime) {
 void ADungeonCrawlerPlayerController::BeginPlay() {
 	Super::BeginPlay();
 
-	// Calc max distance by speed and margin
-	MaxDistance = (Speed * 100) + (Speed * 100 / 2) + SpeedToWorldMargin;
+	// Calc max walk distance by speed and margin
+	Speed = (Speed * 100) + (Speed * 100 / 2) + SpeedToWorldMargin;
+	// Calc max attack distance by speed and margin
+	AttackRange = (AttackRange * 100) + (AttackRange * 100 / 2) + AttackToWorldMargin;
 
 	// Bind round based system event to BeginRound
 	ADungeonCrawlerGameMode* GameMode = (ADungeonCrawlerGameMode*)GetWorld()->GetAuthGameMode();
 	GameMode->ActivateRound.AddUObject(this, &ADungeonCrawlerPlayerController::BeginRound);
 }
 
-
 void ADungeonCrawlerPlayerController::BeginRound(FString name) {
 	if (name == PlayerName) {
 		IsYourRound = true;
+		CurrentAction = 'M';
 	}
 }
 
 // Activates when mouse button press is released
 void ADungeonCrawlerPlayerController::MoveToMouseCursor() {
-	if (!IsYourRound) { return; }
+	if (!IsYourRound || CurrentAction != 'M') { return; }
 
 	// Trace to see what is under the mouse cursor
 	FHitResult Hit;
 	GetHitResultUnderCursor(ECC_Visibility, false, Hit);
 
-	if (Hit.bBlockingHit)
-	{
+	if (Hit.bBlockingHit) {
 		// We hit something, move there
 		DestLocation = Hit.ImpactPoint;
 		SetNewMoveDestination();
@@ -75,10 +77,10 @@ void ADungeonCrawlerPlayerController::MoveToMouseCursor() {
 void ADungeonCrawlerPlayerController::SetNewMoveDestination() {
 	if (!CalcDistance()) { return; }
 	// We need to issue move command only if far enough in order for walk animation to play correctly
-	if (Distance > 120.0f && Distance <= MaxDistance)
+	if (Distance > 120.0f && Distance <= Speed)
 	{
 		// Begin moving so start tracking the distance the player needs yet to walk/ run
-		BeginMoving = true;
+		CurrentAction = 'M';
 		UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, DestLocation);
 	}
 }
@@ -91,4 +93,29 @@ bool ADungeonCrawlerPlayerController::CalcDistance() {
 	}
 
 	return false;
+}
+
+void ADungeonCrawlerPlayerController::SetAttackGoal() {
+	if (!IsYourRound || CurrentAction != 'A') { return; }
+	FHitResult Hit;
+	GetHitResultUnderCursor(ECC_Visibility, false, Hit);
+
+	DestLocation = Hit.ImpactPoint;
+	if (!CalcDistance()) { return; }
+
+	if (Hit.bBlockingHit && Hit.GetActor()->ActorHasTag("Enemy") && Distance <= AttackRange) {
+		// We hit an enemy and its in range
+		if (AttackGoal != NULL) {
+			UpdateRenderCustomDepth(false);
+		}
+		AttackGoal = Cast<ACharacter>(Hit.GetActor());
+		UpdateRenderCustomDepth(true);
+	}
+}
+
+void ADungeonCrawlerPlayerController::UpdateRenderCustomDepth(bool DepthValue) {
+	USkeletalMeshComponent* Mesh = AttackGoal->GetMesh();
+	if (Mesh != NULL) {
+		Mesh->SetRenderCustomDepth(DepthValue);
+	}
 }
