@@ -27,6 +27,10 @@ public:
 
 	char CurrentAction;
 
+	// Attack the goal
+	UFUNCTION(BlueprintCallable, Category = "AttackSystem")
+	void Attack();
+
 private:
 	int32 SpeedToWorldMargin = 50;
 	FVector DestLocation;
@@ -54,8 +58,8 @@ protected:
 	void SetAttackGoal();
 	// Set render custom depth for outlining the enemy
 	void UpdateRenderCustomDepth(bool DepthValue);
-	// Attack the goal
-	void Attack();
+
+	void EndRound();
 };
 
 

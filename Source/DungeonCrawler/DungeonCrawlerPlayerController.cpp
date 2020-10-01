@@ -18,7 +18,7 @@ void ADungeonCrawlerPlayerController::SetupInputComponent() {
 	// Set up gameplay key bindings
 	Super::SetupInputComponent();
 
-	InputComponent->BindAction("SetDestination", IE_Released, this, &ADungeonCrawlerPlayerController::MoveToMouseCursor);
+	InputComponent->BindAction("SetDestination", IE_DoubleClick, this, &ADungeonCrawlerPlayerController::MoveToMouseCursor);
 	InputComponent->BindAction("SetAttackGoal", IE_Released, this, &ADungeonCrawlerPlayerController::SetAttackGoal);
 }
 
@@ -32,9 +32,6 @@ void ADungeonCrawlerPlayerController::PlayerTick(float DeltaTime) {
 		// If the player reached the destination end the round
 		if (Distance <= 120.0f) {
 			CurrentAction = 'A';
-			//FinishRound.Broadcast();
-			//FinishRound.Clear();
-			//IsYourRound = false;
 		}
 	}
 }
@@ -61,7 +58,7 @@ void ADungeonCrawlerPlayerController::BeginRound(FString name) {
 
 // Activates when mouse button press is released
 void ADungeonCrawlerPlayerController::MoveToMouseCursor() {
-	if (!IsYourRound || CurrentAction != 'M') { return; }
+	if (!IsYourRound) { return; }
 
 	// Trace to see what is under the mouse cursor
 	FHitResult Hit;
@@ -80,8 +77,12 @@ void ADungeonCrawlerPlayerController::SetNewMoveDestination() {
 	if (Distance > 120.0f && Distance <= Speed)
 	{
 		// Begin moving so start tracking the distance the player needs yet to walk/ run
-		CurrentAction = 'M';
 		UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, DestLocation);
+		if (CurrentAction == 'A') {
+			EndRound();
+			return;
+		}
+		CurrentAction = 'M';
 	}
 }
 
@@ -118,4 +119,14 @@ void ADungeonCrawlerPlayerController::UpdateRenderCustomDepth(bool DepthValue) {
 	if (Mesh != NULL) {
 		Mesh->SetRenderCustomDepth(DepthValue);
 	}
+}
+
+void ADungeonCrawlerPlayerController::Attack() {
+	if (CurrentAction != 'A' || AttackGoal == NULL) { return; }
+}
+
+void ADungeonCrawlerPlayerController::EndRound() {
+	FinishRound.Broadcast();
+	FinishRound.Clear();
+	IsYourRound = false;
 }
