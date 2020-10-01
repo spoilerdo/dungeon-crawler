@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "EnemyCharacter.h"
 #include "DungeonCrawlerPlayerController.generated.h"
 
 DECLARE_EVENT(ADungeonCrawlerPlayerController, FOnFinishRound)
@@ -39,7 +40,7 @@ private:
 	bool IsYourRound = true;
 
 	int32 AttackToWorldMargin = 130;
-	ACharacter* AttackGoal;
+	AEnemyCharacter* AttackGoal;
 
 protected:
 	virtual void PlayerTick(float DeltaTime) override;

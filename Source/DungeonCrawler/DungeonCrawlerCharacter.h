@@ -19,6 +19,11 @@ public:
 	UMaterial* DecalMaterial;
 	UPROPERTY(EditAnywhere, Category = "Decals", BlueprintReadWrite)
 	UMaterial* DecalMaterialUnavailable;
+	
+	UPROPERTY(EditAnywhere, Category = "Character stats", BlueprintReadWrite)
+	int HP;
+	UPROPERTY(EditAnywhere, Category = "Character stats", BlueprintReadWrite)
+	int AC;
 
 	// Called every frame.
 	virtual void Tick(float DeltaSeconds) override;

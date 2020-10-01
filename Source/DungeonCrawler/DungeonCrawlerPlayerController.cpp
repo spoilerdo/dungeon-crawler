@@ -5,7 +5,7 @@
 #include "Runtime/Engine/Classes/Components/DecalComponent.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "DungeonCrawlerGameMode.h"
-#include "DungeonCrawlerCharacter.h"
+#include "EnemyCharacter.h"
 #include "Engine/World.h"
 
 ADungeonCrawlerPlayerController::ADungeonCrawlerPlayerController()
@@ -109,7 +109,7 @@ void ADungeonCrawlerPlayerController::SetAttackGoal() {
 		if (AttackGoal != NULL) {
 			UpdateRenderCustomDepth(false);
 		}
-		AttackGoal = Cast<ACharacter>(Hit.GetActor());
+		AttackGoal = Cast<AEnemyCharacter>(Hit.GetActor());
 		UpdateRenderCustomDepth(true);
 	}
 }
@@ -123,6 +123,11 @@ void ADungeonCrawlerPlayerController::UpdateRenderCustomDepth(bool DepthValue) {
 
 void ADungeonCrawlerPlayerController::Attack() {
 	if (CurrentAction != 'A' || AttackGoal == NULL) { return; }
+
+	const int hit = FMath::RandRange(0, 10);
+	AttackGoal->DoDamage(hit, 1);
+
+	EndRound();
 }
 
 void ADungeonCrawlerPlayerController::EndRound() {
