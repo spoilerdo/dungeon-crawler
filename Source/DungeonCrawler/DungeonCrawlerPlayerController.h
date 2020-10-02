@@ -32,12 +32,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "AttackSystem")
 	void Attack();
 
+	// Go to the next phase or use it to skip a phase
+	UFUNCTION(BlueprintCallable, Category = "PhaseSystem")
+	void NextPhase();
+
 private:
 	int32 SpeedToWorldMargin = 50;
 	FVector DestLocation;
 	float Distance;
-
-	bool IsYourRound = true;
 
 	int32 AttackToWorldMargin = 130;
 	AEnemyCharacter* AttackGoal;

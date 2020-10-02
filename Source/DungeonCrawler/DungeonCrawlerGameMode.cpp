@@ -24,6 +24,7 @@ void ADungeonCrawlerGameMode::StartPlay() {
 	
 	rounds.Init("P1", 1);
 	rounds.Push("E1");
+	rounds.Push("E2");
 	// Load in first round
 	PlayRound();
 }

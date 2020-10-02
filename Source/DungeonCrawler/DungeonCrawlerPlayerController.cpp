@@ -51,14 +51,13 @@ void ADungeonCrawlerPlayerController::BeginPlay() {
 
 void ADungeonCrawlerPlayerController::BeginRound(FString name) {
 	if (name == PlayerName) {
-		IsYourRound = true;
 		CurrentAction = 'M';
 	}
 }
 
-// Activates when mouse button press is released
+// Activates when mouse button is double pressed
 void ADungeonCrawlerPlayerController::MoveToMouseCursor() {
-	if (!IsYourRound) { return; }
+	if (CurrentAction != 'M' && CurrentAction != 'A') { return; }
 
 	// Trace to see what is under the mouse cursor
 	FHitResult Hit;
@@ -74,15 +73,10 @@ void ADungeonCrawlerPlayerController::MoveToMouseCursor() {
 void ADungeonCrawlerPlayerController::SetNewMoveDestination() {
 	if (!CalcDistance()) { return; }
 	// We need to issue move command only if far enough in order for walk animation to play correctly
-	if (Distance > 120.0f && Distance <= Speed)
-	{
+	if (Distance > 120.0f && Distance <= Speed) {
 		// Begin moving so start tracking the distance the player needs yet to walk/ run
 		UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, DestLocation);
-		if (CurrentAction == 'A') {
-			EndRound();
-			return;
-		}
-		CurrentAction = 'M';
+		NextPhase();
 	}
 }
 
@@ -97,7 +91,7 @@ bool ADungeonCrawlerPlayerController::CalcDistance() {
 }
 
 void ADungeonCrawlerPlayerController::SetAttackGoal() {
-	if (!IsYourRound || CurrentAction != 'A') { return; }
+	if (CurrentAction != 'A') { return; }
 	FHitResult Hit;
 	GetHitResultUnderCursor(ECC_Visibility, false, Hit);
 
@@ -124,14 +118,24 @@ void ADungeonCrawlerPlayerController::UpdateRenderCustomDepth(bool DepthValue) {
 void ADungeonCrawlerPlayerController::Attack() {
 	if (CurrentAction != 'A' || AttackGoal == NULL) { return; }
 
-	const int hit = FMath::RandRange(0, 10);
+	const int hit = FMath::RandRange(2, 10);
 	AttackGoal->DoDamage(hit, 1);
 
-	EndRound();
+	NextPhase();
+}
+
+void ADungeonCrawlerPlayerController::NextPhase() {	
+	if (CurrentAction == 'M') {
+		// second phase
+		CurrentAction = 'A';
+	} else if (CurrentAction == 'A') {
+		// end phase
+		CurrentAction = NULL;
+		EndRound();
+	}
 }
 
 void ADungeonCrawlerPlayerController::EndRound() {
 	FinishRound.Broadcast();
 	FinishRound.Clear();
-	IsYourRound = false;
 }

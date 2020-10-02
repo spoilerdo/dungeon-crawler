@@ -5,7 +5,6 @@ AEnemyCharacter::AEnemyCharacter()
 
 void AEnemyCharacter::DoDamage(int hit, int damage) {
 	if (hit >= AC) {
-		UE_LOG(LogTemp, Warning, TEXT("DAMAGE!!"));
 		HP -= damage;
 		if (HP <= 0) {
 			Destroy();

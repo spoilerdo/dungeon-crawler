@@ -18,7 +18,7 @@ public:
 
 	// Round based system variables
 	FOnFinishAIRound FinishRound;
-	FString Name = "E1";
+	FString Name;
 private:
 	FVector DestLocation;
 	float Distance;

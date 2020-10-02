@@ -25,6 +25,9 @@ void AEnemyAIController::Tick(float DeltaTime) {
 void AEnemyAIController::BeginPlay() {
 	Super::BeginPlay();
 
+	AActor* ActorCharacter = GetPawn();
+	Name = ActorCharacter->Tags[1].ToString();
+
 	// Bind round based system event to BeginRound
 	ADungeonCrawlerGameMode* GameMode = (ADungeonCrawlerGameMode*)GetWorld()->GetAuthGameMode();
 	GameMode->ActivateRound.AddUObject(this, &AEnemyAIController::BeginRound);
