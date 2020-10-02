@@ -20,37 +20,30 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Decals", BlueprintReadWrite)
 	UMaterial* DecalMaterialUnavailable;
 	
+	// Health Points
 	UPROPERTY(EditAnywhere, Category = "Character stats", BlueprintReadWrite)
 	int HP;
+	// Armor Combat
 	UPROPERTY(EditAnywhere, Category = "Character stats", BlueprintReadWrite)
 	int AC;
 
-	// Called every frame.
-	virtual void Tick(float DeltaSeconds) override;
+	void DoDamage(int hit, int damage);
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
-
-	/** Returns TopDownCameraComponent subobject **/
+	// Returns TopDownCameraComponent subobject
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
-	/** Returns CameraBoom subobject **/
+	// Returns CameraBoom subobject
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
-	/** Returns CursorToWorld subobject **/
+	// Returns CursorToWorld subobject
 	FORCEINLINE class UDecalComponent* GetCursorToWorld() { return CursorToWorld; }
 
 private:
-
-	void CalculateDecal(int32 MaxDistance);
-
-	/** Top down camera */
+	// Top down camera
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* TopDownCameraComponent;
-
-	/** Camera boom positioning the camera above the character */
+	// Camera boom positioning the camera above the character
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
-
-	/** A decal that projects to the cursor location. */
+	// A decal that projects to the cursor location
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UDecalComponent* CursorToWorld;
 
@@ -58,10 +51,16 @@ private:
 	FVector2D CameraInput;
 	float ZoomFactor;
 
+	void CalculateDecal(int32 MaxDistance);
+
 	// Input functions
 	void Zoom(float AxisValue);
 	void CalcZoom();
 	void YawCamera(float AxisValue);
 	void CalcYaw();
+
+protected:
+	virtual void Tick(float DeltaSeconds) override;
+	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 };
 

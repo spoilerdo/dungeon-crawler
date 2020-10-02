@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -14,11 +12,12 @@ class DUNGEONCRAWLER_API AEnemyCharacter : public ACharacter
 public:
 	AEnemyCharacter();
 
+	// Health Points
 	UPROPERTY(EditAnywhere, Category = "Character stats", BlueprintReadWrite)
 	int HP;
+	// Armor Combat
 	UPROPERTY(EditAnywhere, Category = "Character stats", BlueprintReadWrite)
 	int AC;
 
 	void DoDamage(int hit, int damage);
-
 };

@@ -1,5 +1,6 @@
 #include "EnemyAIController.h"
 #include "DungeonCrawlerGameMode.h"
+#include "DungeonCrawlerCharacter.h"
 #include "Runtime\AIModule\Classes\Blueprint\AIBlueprintHelperLibrary.h"
 
 
@@ -10,20 +11,24 @@ AEnemyAIController::AEnemyAIController() {
 void AEnemyAIController::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 
-	if (BeginMoving) {
+	if (CurrentAction == 'M') {
 		if (!CalcDistance()) { return; }
 
-		if (Distance <= 130.0f) {
-			BeginMoving = false;
+		if (Distance <= Speed || Distance <= 130.0f) {
+			CurrentAction = 'A';
 			StopMovement();
-			FinishRound.Broadcast();
-			FinishRound.Clear();
+			Attack();
 		}
 	}
 }
 
 void AEnemyAIController::BeginPlay() {
 	Super::BeginPlay();
+
+	// Calc max walk distance by speed and margin
+	Speed = (Speed * 100) + (Speed * 100 / 2) + SpeedToWorldMargin;
+	// Calc max attack distance by attack range and margin
+	AttackRange = (AttackRange * 100) + (AttackRange * 100 / 2) + AttackToWorldMargin;
 
 	AActor* ActorCharacter = GetPawn();
 	Name = ActorCharacter->Tags[1].ToString();
@@ -35,10 +40,14 @@ void AEnemyAIController::BeginPlay() {
 
 void AEnemyAIController::BeginRound(FString name) {
 	if (name == Name) {
-		DestLocation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
-		BeginMoving = true;
-		MoveToLocation(DestLocation);
+		Move();
 	}
+}
+
+void AEnemyAIController::Move() {
+	DestLocation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
+	CurrentAction = 'M';
+	MoveToLocation(DestLocation);
 }
 
 bool AEnemyAIController::CalcDistance() {
@@ -49,4 +58,21 @@ bool AEnemyAIController::CalcDistance() {
 	}
 
 	return false;
+}
+
+void AEnemyAIController::Attack() {
+	if (Distance <= AttackRange) {
+		ADungeonCrawlerCharacter* AttackGoal = Cast<ADungeonCrawlerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
+		if (AttackGoal) {
+			const int hit = FMath::RandRange(2, 10);
+			AttackGoal->DoDamage(hit, 1);
+		}
+	}
+
+	EndRound();
+}
+
+void AEnemyAIController::EndRound() {
+	FinishRound.Broadcast();
+	FinishRound.Clear();
 }

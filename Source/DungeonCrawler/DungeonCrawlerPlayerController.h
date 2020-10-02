@@ -25,14 +25,13 @@ public:
 	// Round based system variables
 	FOnFinishRound FinishRound;
 	FString PlayerName = "P1";
-
 	char CurrentAction;
 
 	// Attack the goal
 	UFUNCTION(BlueprintCallable, Category = "AttackSystem")
 	void Attack();
 
-	// Go to the next phase or use it to skip a phase
+	// Go to the next phase or use it to skip a method
 	UFUNCTION(BlueprintCallable, Category = "PhaseSystem")
 	void NextPhase();
 
@@ -44,17 +43,12 @@ private:
 	int32 AttackToWorldMargin = 130;
 	AEnemyCharacter* AttackGoal;
 
-protected:
-	virtual void PlayerTick(float DeltaTime) override;
-	virtual void SetupInputComponent() override;
-	virtual void BeginPlay() override;
-
+	// Begin round when event is being called and it is your turn
 	void BeginRound(FString name);
-
 	// Navigate player to the current mouse cursor location.
 	void MoveToMouseCursor();
 	// Navigate player to the given world location
-	void SetNewMoveDestination();
+	void Move();
 	// Calculates distance and returns true if succesfull
 	bool CalcDistance();
 	// Set the attack goal of the character
@@ -62,7 +56,10 @@ protected:
 	// Set render custom depth for outlining the enemy
 	void UpdateRenderCustomDepth(bool DepthValue);
 
-	void EndRound();
+protected:
+	virtual void PlayerTick(float DeltaTime) override;
+	virtual void SetupInputComponent() override;
+	virtual void BeginPlay() override;
 };
 
 

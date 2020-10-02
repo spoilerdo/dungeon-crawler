@@ -1,5 +1,3 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
 #include "DungeonCrawlerCharacter.h"
 #include "DungeonCrawlerPlayerController.h"
 #include "UObject/ConstructorHelpers.h"
@@ -116,4 +114,13 @@ void ADungeonCrawlerCharacter::CalcYaw() {
 	FRotator NewRotation = CameraBoom->GetComponentRotation();
 	NewRotation.Yaw += CameraInput.X;
 	CameraBoom->SetWorldRotation(NewRotation);
+}
+
+void ADungeonCrawlerCharacter::DoDamage(int hit, int damage) {
+	if (hit >= AC) {
+		HP -= damage;
+		if (HP <= 0) {
+			Destroy();
+		}
+	}
 }

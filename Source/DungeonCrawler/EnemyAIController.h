@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -16,21 +14,31 @@ class DUNGEONCRAWLER_API AEnemyAIController : public AAIController
 public:
 	AEnemyAIController();
 
+	UPROPERTY(EditAnywhere, Category = "EnemyStats", BlueprintReadWrite)
+	int32 Speed;
+	UPROPERTY(EditAnywhere, Category = "EnemyStats", BlueprintReadWrite)
+	int32 AttackRange;
+
 	// Round based system variables
 	FOnFinishAIRound FinishRound;
 	FString Name;
+	char CurrentAction;
 private:
+	int32 SpeedToWorldMargin = 50;
 	FVector DestLocation;
 	float Distance;
 
-	bool BeginMoving = false;
+	int32 AttackToWorldMargin = 130;
+
+	// Begin round when event is being called and it is your turn
+	void BeginRound(FString name);
+	void Move();
+	// Calculates distance and returns true if sucessfull
+	bool CalcDistance();
+	void Attack();
+	void EndRound();
 
 protected:
 	virtual void Tick(float DeltaTime) override;
 	virtual void BeginPlay() override;
-
-	void BeginRound(FString name);
-
-	// Calculates distance and returns true if sucessfull
-	bool CalcDistance();
 };

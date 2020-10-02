@@ -1,5 +1,3 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
 #include "DungeonCrawlerPlayerController.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Runtime/Engine/Classes/Components/DecalComponent.h"
@@ -29,7 +27,7 @@ void ADungeonCrawlerPlayerController::PlayerTick(float DeltaTime) {
 	if (CurrentAction == 'M') {
 		if (!CalcDistance()) { return; }
 
-		// If the player reached the destination end the round
+		// If the player reached the destination go to the next phase
 		if (Distance <= 120.0f) {
 			CurrentAction = 'A';
 		}
@@ -41,10 +39,10 @@ void ADungeonCrawlerPlayerController::BeginPlay() {
 
 	// Calc max walk distance by speed and margin
 	Speed = (Speed * 100) + (Speed * 100 / 2) + SpeedToWorldMargin;
-	// Calc max attack distance by speed and margin
+	// Calc max attack distance by attack range and margin
 	AttackRange = (AttackRange * 100) + (AttackRange * 100 / 2) + AttackToWorldMargin;
 
-	// Bind round based system event to BeginRound
+	// Bind round based system event to BeginRound method
 	ADungeonCrawlerGameMode* GameMode = (ADungeonCrawlerGameMode*)GetWorld()->GetAuthGameMode();
 	GameMode->ActivateRound.AddUObject(this, &ADungeonCrawlerPlayerController::BeginRound);
 }
@@ -66,11 +64,11 @@ void ADungeonCrawlerPlayerController::MoveToMouseCursor() {
 	if (Hit.bBlockingHit) {
 		// We hit something, move there
 		DestLocation = Hit.ImpactPoint;
-		SetNewMoveDestination();
+		Move();
 	}
 }
 
-void ADungeonCrawlerPlayerController::SetNewMoveDestination() {
+void ADungeonCrawlerPlayerController::Move() {
 	if (!CalcDistance()) { return; }
 	// We need to issue move command only if far enough in order for walk animation to play correctly
 	if (Distance > 120.0f && Distance <= Speed) {
@@ -90,6 +88,7 @@ bool ADungeonCrawlerPlayerController::CalcDistance() {
 	return false;
 }
 
+// Set attack goal (Enemy object only), is needed before pressing the attack button
 void ADungeonCrawlerPlayerController::SetAttackGoal() {
 	if (CurrentAction != 'A') { return; }
 	FHitResult Hit;
@@ -126,16 +125,12 @@ void ADungeonCrawlerPlayerController::Attack() {
 
 void ADungeonCrawlerPlayerController::NextPhase() {	
 	if (CurrentAction == 'M') {
-		// second phase
+		// Second phase
 		CurrentAction = 'A';
 	} else if (CurrentAction == 'A') {
-		// end phase
+		// End phase
 		CurrentAction = NULL;
-		EndRound();
+		FinishRound.Broadcast();
+		FinishRound.Clear();
 	}
-}
-
-void ADungeonCrawlerPlayerController::EndRound() {
-	FinishRound.Broadcast();
-	FinishRound.Clear();
 }
