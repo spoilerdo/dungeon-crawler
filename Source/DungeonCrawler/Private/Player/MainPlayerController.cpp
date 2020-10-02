@@ -1,26 +1,23 @@
-#include "DungeonCrawlerPlayerController.h"
+#include "Player/MainPlayerController.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Runtime/Engine/Classes/Components/DecalComponent.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
-#include "DungeonCrawlerGameMode.h"
-#include "EnemyCharacter.h"
 #include "Engine/World.h"
 
-ADungeonCrawlerPlayerController::ADungeonCrawlerPlayerController()
-{
+AMainPlayerController::AMainPlayerController() {
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Crosshairs;
 }
 
-void ADungeonCrawlerPlayerController::SetupInputComponent() {
+void AMainPlayerController::SetupInputComponent() {
 	// Set up gameplay key bindings
 	Super::SetupInputComponent();
 
-	InputComponent->BindAction("SetDestination", IE_DoubleClick, this, &ADungeonCrawlerPlayerController::MoveToMouseCursor);
-	InputComponent->BindAction("SetAttackGoal", IE_Released, this, &ADungeonCrawlerPlayerController::SetAttackGoal);
+	InputComponent->BindAction("SetDestination", IE_DoubleClick, this, &AMainPlayerController::MoveToMouseCursor);
+	InputComponent->BindAction("SetAttackGoal", IE_Released, this, &AMainPlayerController::SetAttackGoal);
 }
 
-void ADungeonCrawlerPlayerController::PlayerTick(float DeltaTime) {
+void AMainPlayerController::PlayerTick(float DeltaTime) {
 	Super::PlayerTick(DeltaTime);
 
 	// When moving check if you reached destination
@@ -34,7 +31,7 @@ void ADungeonCrawlerPlayerController::PlayerTick(float DeltaTime) {
 	}
 }
 
-void ADungeonCrawlerPlayerController::BeginPlay() {
+void AMainPlayerController::BeginPlay() {
 	Super::BeginPlay();
 
 	// Calc max walk distance by speed and margin
@@ -47,14 +44,14 @@ void ADungeonCrawlerPlayerController::BeginPlay() {
 	GameMode->ActivateRound.AddUObject(this, &ADungeonCrawlerPlayerController::BeginRound);
 }
 
-void ADungeonCrawlerPlayerController::BeginRound(FString name) {
+void AMainPlayerController::BeginRound(FString name) {
 	if (name == PlayerName) {
 		CurrentAction = 'M';
 	}
 }
 
-// Activates when mouse button is double pressed
-void ADungeonCrawlerPlayerController::MoveToMouseCursor() {
+//Activates when mouse button is double pressed
+void AMainPlayerController::MoveToMouseCursor() {
 	if (CurrentAction != 'M' && CurrentAction != 'A') { return; }
 
 	// Trace to see what is under the mouse cursor
@@ -68,7 +65,7 @@ void ADungeonCrawlerPlayerController::MoveToMouseCursor() {
 	}
 }
 
-void ADungeonCrawlerPlayerController::Move() {
+void AMainPlayerController::Move() {
 	if (!CalcDistance()) { return; }
 	// We need to issue move command only if far enough in order for walk animation to play correctly
 	if (Distance > 120.0f && Distance <= Speed) {
@@ -78,7 +75,7 @@ void ADungeonCrawlerPlayerController::Move() {
 	}
 }
 
-bool ADungeonCrawlerPlayerController::CalcDistance() {
+bool AMainPlayerController::CalcDistance() {
 	APawn* const MyPawn = GetPawn();
 	if (MyPawn) {
 		Distance = FVector::Dist(DestLocation, MyPawn->GetActorLocation());
@@ -89,7 +86,7 @@ bool ADungeonCrawlerPlayerController::CalcDistance() {
 }
 
 // Set attack goal (Enemy object only), is needed before pressing the attack button
-void ADungeonCrawlerPlayerController::SetAttackGoal() {
+void AMainPlayerController::SetAttackGoal() {
 	if (CurrentAction != 'A') { return; }
 	FHitResult Hit;
 	GetHitResultUnderCursor(ECC_Visibility, false, Hit);
@@ -107,14 +104,14 @@ void ADungeonCrawlerPlayerController::SetAttackGoal() {
 	}
 }
 
-void ADungeonCrawlerPlayerController::UpdateRenderCustomDepth(bool DepthValue) {
+void AMainPlayerController::UpdateRenderCustomDepth(bool DepthValue) {
 	USkeletalMeshComponent* Mesh = AttackGoal->GetMesh();
 	if (Mesh != NULL) {
 		Mesh->SetRenderCustomDepth(DepthValue);
 	}
 }
 
-void ADungeonCrawlerPlayerController::Attack() {
+void AMainPlayerController::Attack() {
 	if (CurrentAction != 'A' || AttackGoal == NULL) { return; }
 
 	const int hit = FMath::RandRange(2, 10);
@@ -123,11 +120,12 @@ void ADungeonCrawlerPlayerController::Attack() {
 	NextPhase();
 }
 
-void ADungeonCrawlerPlayerController::NextPhase() {	
+void AMainPlayerController::NextPhase() {
 	if (CurrentAction == 'M') {
 		// Second phase
 		CurrentAction = 'A';
-	} else if (CurrentAction == 'A') {
+	}
+	else if (CurrentAction == 'A') {
 		// End phase
 		CurrentAction = NULL;
 		FinishRound.Broadcast();

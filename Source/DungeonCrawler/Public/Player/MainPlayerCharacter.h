@@ -1,19 +1,17 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
 #pragma once
 
 #include "CoreMinimal.h"
-#include "DungeonCrawlerPlayerController.h"
+#include "Player/MainPlayerController.h"
 #include "GameFramework/Character.h"
-#include "DungeonCrawlerCharacter.generated.h"
+#include "MainPlayerCharacter.generated.h"
 
 UCLASS(Blueprintable)
-class ADungeonCrawlerCharacter : public ACharacter
+class DUNGEONCRAWLER_API AMainPlayerCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
-	ADungeonCrawlerCharacter();
+	AMainPlayerCharacter();
 
 	UPROPERTY(EditAnywhere, Category = "Decals", BlueprintReadWrite)
 	UMaterial* DecalMaterial;
@@ -63,4 +61,3 @@ protected:
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 };
-

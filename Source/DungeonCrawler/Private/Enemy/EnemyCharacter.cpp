@@ -1,4 +1,4 @@
-#include "EnemyCharacter.h"
+#include "Enemy/EnemyCharacter.h"
 
 AEnemyCharacter::AEnemyCharacter()
 {}
@@ -11,4 +11,3 @@ void AEnemyCharacter::DoDamage(int hit, int damage) {
 		}
 	}
 }
-

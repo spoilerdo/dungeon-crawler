@@ -1,5 +1,5 @@
-#include "DungeonCrawlerCharacter.h"
-#include "DungeonCrawlerPlayerController.h"
+#include "Player/MainPlayerCharacter.h"
+#include "Player/MainPlayerController.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
 #include "Components/DecalComponent.h"
@@ -11,7 +11,7 @@
 #include "Materials/Material.h"
 #include "Engine/World.h"
 
-ADungeonCrawlerCharacter::ADungeonCrawlerCharacter()
+AMainPlayerCharacter::AMainPlayerCharacter()
 {
 	// Set size for player capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -52,22 +52,22 @@ ADungeonCrawlerCharacter::ADungeonCrawlerCharacter()
 	PrimaryActorTick.bStartWithTickEnabled = true;
 }
 
-void ADungeonCrawlerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) {
+void AMainPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	InputComponent->BindAxis("Zoom", this, &ADungeonCrawlerCharacter::Zoom);
-	InputComponent->BindAxis("CameraYaw", this, &ADungeonCrawlerCharacter::YawCamera);
+	InputComponent->BindAxis("Zoom", this, &AMainPlayerCharacter::Zoom);
+	InputComponent->BindAxis("CameraYaw", this, &AMainPlayerCharacter::YawCamera);
 }
 
-void ADungeonCrawlerCharacter::Zoom(float AxisValue) {
+void AMainPlayerCharacter::Zoom(float AxisValue) {
 	ZoomFactor = AxisValue;
 }
 
-void ADungeonCrawlerCharacter::YawCamera(float AxisValue) {
+void AMainPlayerCharacter::YawCamera(float AxisValue) {
 	CameraInput.X = FMath::Clamp<float>(AxisValue, -1.0f, 1.0f);
 }
 
-void ADungeonCrawlerCharacter::Tick(float DeltaSeconds)
+void AMainPlayerCharacter::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
 
@@ -78,7 +78,7 @@ void ADungeonCrawlerCharacter::Tick(float DeltaSeconds)
 
 	if (CursorToWorld != nullptr)
 	{
-		if (ADungeonCrawlerPlayerController* PC = Cast<ADungeonCrawlerPlayerController>(GetController()))
+		if (AMainPlayerController* PC = Cast<AMainPlayerController>(GetController()))
 		{
 			FHitResult TraceHitResult;
 			PC->GetHitResultUnderCursor(ECC_Visibility, true, TraceHitResult);
@@ -91,7 +91,7 @@ void ADungeonCrawlerCharacter::Tick(float DeltaSeconds)
 	}
 }
 
-void ADungeonCrawlerCharacter::CalculateDecal(int32 MaxDistance) {
+void AMainPlayerCharacter::CalculateDecal(int32 MaxDistance) {
 	float const Distance = FVector::Dist(CursorToWorld->GetComponentLocation(), GetActorLocation());
 	if (Distance > MaxDistance && CursorToWorld->GetDecalMaterial() == DecalMaterial) {
 		CursorToWorld->SetDecalMaterial(DecalMaterialUnavailable);
@@ -101,7 +101,7 @@ void ADungeonCrawlerCharacter::CalculateDecal(int32 MaxDistance) {
 	}
 }
 
-void ADungeonCrawlerCharacter::CalcZoom() {
+void AMainPlayerCharacter::CalcZoom() {
 	ZoomFactor *= 2;
 	float NewFOV = TopDownCameraComponent->FieldOfView += ZoomFactor / 2;
 	TopDownCameraComponent->FieldOfView = FMath::Clamp<float>(NewFOV, 60.0f, 90.0f);
@@ -110,13 +110,13 @@ void ADungeonCrawlerCharacter::CalcZoom() {
 	CameraBoom->TargetArmLength = FMath::Clamp<float>(NewArmLength, 600.0f, 800.0f);
 }
 
-void ADungeonCrawlerCharacter::CalcYaw() {
+void AMainPlayerCharacter::CalcYaw() {
 	FRotator NewRotation = CameraBoom->GetComponentRotation();
 	NewRotation.Yaw += CameraInput.X;
 	CameraBoom->SetWorldRotation(NewRotation);
 }
 
-void ADungeonCrawlerCharacter::DoDamage(int hit, int damage) {
+void AMainPlayerCharacter::DoDamage(int hit, int damage) {
 	if (hit >= AC) {
 		HP -= damage;
 		if (HP <= 0) {

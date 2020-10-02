@@ -33,7 +33,7 @@ private:
 	// Begin round when event is being called and it is your turn
 	void BeginRound(FString name);
 	void Move();
-	// Calculates distance and returns true if sucessfull
+	// Calculates distance and returns true if successful
 	bool CalcDistance();
 	void Attack();
 	void EndRound();

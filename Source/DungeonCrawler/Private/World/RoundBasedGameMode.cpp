@@ -1,14 +1,14 @@
-#include "DungeonCrawlerGameMode.h"
-#include "DungeonCrawlerPlayerController.h"
-#include "EnemyAIController.h"
-#include "DungeonCrawlerCharacter.h"
+#include "World/RoundBasedGameMode.h"
+#include "Player/MainPlayerController.h"
+#include "Enemy/EnemyAIController.h"
+#include "Player/MainPlayerCharacter.h"
 #include "UObject/ConstructorHelpers.h"
-#include "Runtime\Engine\Classes\Kismet\GameplayStatics.h"
+#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 
-ADungeonCrawlerGameMode::ADungeonCrawlerGameMode() {
+ARoundBasedGameMode::ARoundBasedGameMode() {
 	// Use custom PlayerController class
-	PlayerControllerClass = ADungeonCrawlerPlayerController::StaticClass();
+	PlayerControllerClass = AMainPlayerController::StaticClass();
 
 	// Set default pawn class to Blueprinted character
 	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/Character/Player/Blueprints/PlayerCharacter"));
@@ -19,7 +19,7 @@ ADungeonCrawlerGameMode::ADungeonCrawlerGameMode() {
 }
 
 // Start playing the game
-void ADungeonCrawlerGameMode::StartPlay() {
+void ARoundBasedGameMode::StartPlay() {
 	Super::StartPlay();	
 	
 	rounds.Init("P1", 1);
@@ -29,7 +29,7 @@ void ADungeonCrawlerGameMode::StartPlay() {
 	PlayRound();
 }
 
-void ADungeonCrawlerGameMode::PlayRound() {
+void ARoundBasedGameMode::PlayRound() {
 	// Check if rounds are ended if it is, reset it
 	if (index >= rounds.Num()) { index = 0; }
 
@@ -41,16 +41,16 @@ void ADungeonCrawlerGameMode::PlayRound() {
 		AActor* actor = foundActors[0];
 		
 		if (rounds[index].Contains("P")) {
-			ADungeonCrawlerPlayerController* PC = Cast<ADungeonCrawlerPlayerController>(UGameplayStatics::GetPlayerController(actor, 0));
+			AMainPlayerController* PC = Cast<AMainPlayerController>(UGameplayStatics::GetPlayerController(actor, 0));
 			if (PC != NULL) {
 				// Bind the player's end round event to EndRound
-				PC->FinishRound.AddUObject(this, &ADungeonCrawlerGameMode::EndRound);
+				PC->FinishRound.AddUObject(this, &ARoundBasedGameMode::EndRound);
 			}
 		}
 		else {
 			AEnemyAIController* AC = Cast<AEnemyAIController>(UAIBlueprintHelperLibrary::GetAIController(actor));
 			if (AC != NULL) {
-				AC->FinishRound.AddUObject(this, &ADungeonCrawlerGameMode::EndRound);
+				AC->FinishRound.AddUObject(this, &ARoundBasedGameMode::EndRound);
 			}
 		}
 
@@ -59,9 +59,8 @@ void ADungeonCrawlerGameMode::PlayRound() {
 	}
 }
 
-void ADungeonCrawlerGameMode::EndRound() {
+void ARoundBasedGameMode::EndRound() {
 	// Got to the next round
 	index += 1;
 	PlayRound();
 }
-

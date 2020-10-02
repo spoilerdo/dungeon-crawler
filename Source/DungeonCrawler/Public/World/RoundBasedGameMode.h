@@ -1,20 +1,18 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "DungeonCrawlerGameMode.generated.h"
+#include "RoundBasedGameMode.generated.h"
 
-DECLARE_EVENT_OneParam(ADungeonCrawlerGameMode, FOnActivateRound, FString);
+DECLARE_EVENT_OneParam(ARoundBasedGameMode, FOnActivateRound, FString);
 
 UCLASS(minimalapi)
-class ADungeonCrawlerGameMode : public AGameModeBase
+class DUNGEONCRAWLER_API ARoundBasedGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
 public:
-	ADungeonCrawlerGameMode();
+	ARoundBasedGameMode();
 
 	// Round based system variables
 	FOnActivateRound ActivateRound;
@@ -31,6 +29,3 @@ private:
 protected:
 	virtual void StartPlay() override;
 };
-
-
-

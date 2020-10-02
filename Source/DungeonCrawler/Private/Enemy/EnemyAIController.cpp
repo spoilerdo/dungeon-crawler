@@ -1,7 +1,7 @@
-#include "EnemyAIController.h"
-#include "DungeonCrawlerGameMode.h"
-#include "DungeonCrawlerCharacter.h"
-#include "Runtime\AIModule\Classes\Blueprint\AIBlueprintHelperLibrary.h"
+#include "Enemy/EnemyAIController.h"
+#include "World/RoundBasedGameMode.h"
+#include "Player/MainPlayerCharacter.h"
+#include "Runtime/AIModule/Classes/Blueprint/AIBlueprintHelperLibrary.h"
 
 
 AEnemyAIController::AEnemyAIController() {

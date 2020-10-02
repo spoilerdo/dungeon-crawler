@@ -1,21 +1,21 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "EnemyCharacter.h"
-#include "DungeonCrawlerPlayerController.generated.h"
+#include "MainPlayerController.generated.h"
 
 DECLARE_EVENT(ADungeonCrawlerPlayerController, FOnFinishRound)
 
+/**
+ * Main player controller
+ */
 UCLASS()
-class ADungeonCrawlerPlayerController : public APlayerController
+class DUNGEONCRAWLER_API AMainPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
 public:
-	ADungeonCrawlerPlayerController();
+	AMainPlayerController();
 
 	UPROPERTY(EditAnywhere, Category = "PlayerStats", BlueprintReadWrite)
 	int32 Speed;
@@ -61,5 +61,3 @@ protected:
 	virtual void SetupInputComponent() override;
 	virtual void BeginPlay() override;
 };
-
-
