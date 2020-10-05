@@ -2,9 +2,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "Enemy/EnemyCharacter.h"
 #include "MainPlayerController.generated.h"
 
-DECLARE_EVENT(ADungeonCrawlerPlayerController, FOnFinishRound)
+DECLARE_EVENT(AMainPlayerController, FOnFinishRound)
 
 /**
  * Main player controller

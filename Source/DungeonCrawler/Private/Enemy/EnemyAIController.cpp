@@ -34,7 +34,7 @@ void AEnemyAIController::BeginPlay() {
 	Name = ActorCharacter->Tags[1].ToString();
 
 	// Bind round based system event to BeginRound
-	ADungeonCrawlerGameMode* GameMode = (ADungeonCrawlerGameMode*)GetWorld()->GetAuthGameMode();
+	ARoundBasedGameMode* GameMode = (ARoundBasedGameMode*)GetWorld()->GetAuthGameMode();
 	GameMode->ActivateRound.AddUObject(this, &AEnemyAIController::BeginRound);
 }
 
@@ -62,7 +62,7 @@ bool AEnemyAIController::CalcDistance() {
 
 void AEnemyAIController::Attack() {
 	if (Distance <= AttackRange) {
-		ADungeonCrawlerCharacter* AttackGoal = Cast<ADungeonCrawlerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
+		AMainPlayerCharacter* AttackGoal = Cast<AMainPlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
 		if (AttackGoal) {
 			const int hit = FMath::RandRange(2, 10);
 			AttackGoal->DoDamage(hit, 1);

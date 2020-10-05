@@ -6,7 +6,7 @@
 
 DECLARE_EVENT_OneParam(ARoundBasedGameMode, FOnActivateRound, FString);
 
-UCLASS(minimalapi)
+UCLASS()
 class DUNGEONCRAWLER_API ARoundBasedGameMode : public AGameModeBase
 {
 	GENERATED_BODY()

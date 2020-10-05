@@ -2,6 +2,8 @@
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Runtime/Engine/Classes/Components/DecalComponent.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
+#include "World/RoundBasedGameMode.h"
+#include "Enemy/EnemyCharacter.h"
 #include "Engine/World.h"
 
 AMainPlayerController::AMainPlayerController() {
@@ -40,8 +42,8 @@ void AMainPlayerController::BeginPlay() {
 	AttackRange = (AttackRange * 100) + (AttackRange * 100 / 2) + AttackToWorldMargin;
 
 	// Bind round based system event to BeginRound method
-	ADungeonCrawlerGameMode* GameMode = (ADungeonCrawlerGameMode*)GetWorld()->GetAuthGameMode();
-	GameMode->ActivateRound.AddUObject(this, &ADungeonCrawlerPlayerController::BeginRound);
+	ARoundBasedGameMode* GameMode = (ARoundBasedGameMode*)GetWorld()->GetAuthGameMode();
+	GameMode->ActivateRound.AddUObject(this, &AMainPlayerController::BeginRound);
 }
 
 void AMainPlayerController::BeginRound(FString name) {
