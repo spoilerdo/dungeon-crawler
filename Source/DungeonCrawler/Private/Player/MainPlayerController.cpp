@@ -1,6 +1,7 @@
 #include "Player/MainPlayerController.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
-#include "Runtime/Engine/Classes/Components/DecalComponent.h"
+#include "Components/DecalComponent.h"
+#include "Components/TextBlock.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "World/RoundBasedGameMode.h"
 #include "Enemy/EnemyCharacter.h"
@@ -69,6 +70,8 @@ void AMainPlayerController::MoveToMouseCursor() {
 
 void AMainPlayerController::Move() {
 	if (!CalcDistance()) { return; }
+	UTextBlock* text = Cast<UTextBlock>(UIOverlay->GetWidgetFromName("StepsText"));
+	text->Text = FText().FromString("Test");
 	// We need to issue move command only if far enough in order for walk animation to play correctly
 	if (Distance > 120.0f && Distance <= Speed) {
 		// Begin moving so start tracking the distance the player needs yet to walk/ run

@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "Enemy/EnemyCharacter.h"
+#include "Runtime/UMG/Public/Blueprint/UserWidget.h"
 #include "MainPlayerController.generated.h"
 
 DECLARE_EVENT(AMainPlayerController, FOnFinishRound)
@@ -22,6 +23,8 @@ public:
 	int32 Speed;
 	UPROPERTY(EditAnywhere, Category = "PlayerStats", BlueprintReadWrite)
 	int32 AttackRange;
+	UPROPERTY(EditAnywhere, Category = "UI")
+	UUserWidget* UIOverlay;
 
 	// Round based system variables
 	FOnFinishRound FinishRound;
