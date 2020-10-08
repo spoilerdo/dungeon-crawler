@@ -3,6 +3,11 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "Enemy/EnemyCharacter.h"
+#include "Runtime/UMG/Public/UMG.h"
+#include "Runtime/UMG/Public/UMGStyle.h"
+#include "Runtime/UMG/Public/Slate/SObjectWidget.h"
+#include "Runtime/UMG/Public/IUMGModule.h"
+#include "Runtime/UMG/Public/Blueprint/UserWidget.h"
 #include "MainPlayerController.generated.h"
 
 DECLARE_EVENT(AMainPlayerController, FOnFinishRound)
@@ -38,11 +43,15 @@ public:
 
 private:
 	int32 SpeedToWorldMargin = 50;
+	int32 SpeedInTiles;
 	FVector DestLocation;
 	float Distance;
 
 	int32 AttackToWorldMargin = 130;
 	AEnemyCharacter* AttackGoal;
+
+	TSubclassOf<UUserWidget> UIOverlayTClass;
+	UUserWidget* UIOverlay;
 
 	// Begin round when event is being called and it is your turn
 	void BeginRound(FString name);
@@ -52,6 +61,8 @@ private:
 	void Move();
 	// Calculates distance and returns true if succesfull
 	bool CalcDistance();
+	// Calculate the speed that is left
+	void DisplaySpeedLeft();
 	// Set the attack goal of the character
 	void SetAttackGoal();
 	// Set render custom depth for outlining the enemy

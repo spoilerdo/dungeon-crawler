@@ -12,8 +12,7 @@ ARoundBasedGameMode::ARoundBasedGameMode() {
 
 	// Set default pawn class to Blueprinted character
 	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/Character/Player/Blueprints/PlayerCharacter"));
-	if (PlayerPawnBPClass.Class != NULL)
-	{
+	if (PlayerPawnBPClass.Class != NULL) {
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
 }

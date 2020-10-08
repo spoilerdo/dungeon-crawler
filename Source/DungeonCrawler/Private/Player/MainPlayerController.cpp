@@ -1,14 +1,26 @@
 #include "Player/MainPlayerController.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
-#include "Runtime/Engine/Classes/Components/DecalComponent.h"
+#include "Blueprint/UserWidget.h"
+#include "Components/DecalComponent.h"
+#include "Components/TextBlock.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "World/RoundBasedGameMode.h"
 #include "Enemy/EnemyCharacter.h"
+#include "Runtime/UMG/Public/UMG.h"
+#include "Runtime/UMG/Public/UMGStyle.h"
+#include "Runtime/UMG/Public/Slate/SObjectWidget.h"
+#include "Runtime/UMG/Public/IUMGModule.h"
+#include "Runtime/UMG/Public/Blueprint/UserWidget.h"
 #include "Engine/World.h"
 
 AMainPlayerController::AMainPlayerController() {
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Crosshairs;
+
+	static ConstructorHelpers::FClassFinder<UUserWidget> UIOverlayClass(TEXT("Blueprint'/Game/UI/GameOverlay'"));
+	if (UIOverlayClass.Class != NULL) {
+		UIOverlayTClass = UIOverlayClass.Class;
+	}
 }
 
 void AMainPlayerController::SetupInputComponent() {
@@ -36,7 +48,11 @@ void AMainPlayerController::PlayerTick(float DeltaTime) {
 void AMainPlayerController::BeginPlay() {
 	Super::BeginPlay();
 
+	UIOverlay = CreateWidget<UUserWidget>(this, UIOverlayTClass);
+	UIOverlay->AddToViewport(9999);
+
 	// Calc max walk distance by speed and margin
+	SpeedInTiles = Speed;
 	Speed = (Speed * 100) + (Speed * 100 / 2) + SpeedToWorldMargin;
 	// Calc max attack distance by attack range and margin
 	AttackRange = (AttackRange * 100) + (AttackRange * 100 / 2) + AttackToWorldMargin;
@@ -69,8 +85,11 @@ void AMainPlayerController::MoveToMouseCursor() {
 
 void AMainPlayerController::Move() {
 	if (!CalcDistance()) { return; }
+
 	// We need to issue move command only if far enough in order for walk animation to play correctly
 	if (Distance > 120.0f && Distance <= Speed) {
+		DisplaySpeedLeft();
+
 		// Begin moving so start tracking the distance the player needs yet to walk/ run
 		UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, DestLocation);
 		NextPhase();
@@ -85,6 +104,14 @@ bool AMainPlayerController::CalcDistance() {
 	}
 
 	return false;
+}
+
+void AMainPlayerController::DisplaySpeedLeft() {
+	int32 SpeedLeft = Speed - Distance;
+
+	UTextBlock* text = Cast<UTextBlock>(UIOverlay->GetWidgetFromName("StepsText"));
+	int32 SpeedLeftInTiles = SpeedLeft* SpeedInTiles / Speed;
+	text->SetText(FText::FromString("Steps left: "+ FString::FromInt(SpeedLeftInTiles)));
 }
 
 // Set attack goal (Enemy object only), is needed before pressing the attack button
