@@ -43,6 +43,7 @@ public:
 
 private:
 	int32 SpeedToWorldMargin = 50;
+	int32 SpeedInTiles;
 	FVector DestLocation;
 	float Distance;
 
@@ -60,6 +61,8 @@ private:
 	void Move();
 	// Calculates distance and returns true if succesfull
 	bool CalcDistance();
+	// Calculate the speed that is left
+	void DisplaySpeedLeft();
 	// Set the attack goal of the character
 	void SetAttackGoal();
 	// Set render custom depth for outlining the enemy

@@ -19,7 +19,6 @@ AMainPlayerController::AMainPlayerController() {
 
 	static ConstructorHelpers::FClassFinder<UUserWidget> UIOverlayClass(TEXT("Blueprint'/Game/UI/GameOverlay'"));
 	if (UIOverlayClass.Class != NULL) {
-		UE_LOG(LogTemp, Warning, TEXT("FOUND OVERLAY!!!"));
 		UIOverlayTClass = UIOverlayClass.Class;
 	}
 }
@@ -53,6 +52,7 @@ void AMainPlayerController::BeginPlay() {
 	UIOverlay->AddToViewport(9999);
 
 	// Calc max walk distance by speed and margin
+	SpeedInTiles = Speed;
 	Speed = (Speed * 100) + (Speed * 100 / 2) + SpeedToWorldMargin;
 	// Calc max attack distance by attack range and margin
 	AttackRange = (AttackRange * 100) + (AttackRange * 100 / 2) + AttackToWorldMargin;
@@ -85,9 +85,11 @@ void AMainPlayerController::MoveToMouseCursor() {
 
 void AMainPlayerController::Move() {
 	if (!CalcDistance()) { return; }
-	//UTextBlock* text = Cast<UTextBlock>(UIOverlay.Get()->GetWidgetFromName("StepsText"));
+
 	// We need to issue move command only if far enough in order for walk animation to play correctly
 	if (Distance > 120.0f && Distance <= Speed) {
+		DisplaySpeedLeft();
+
 		// Begin moving so start tracking the distance the player needs yet to walk/ run
 		UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, DestLocation);
 		NextPhase();
@@ -102,6 +104,14 @@ bool AMainPlayerController::CalcDistance() {
 	}
 
 	return false;
+}
+
+void AMainPlayerController::DisplaySpeedLeft() {
+	int32 SpeedLeft = Speed - Distance;
+
+	UTextBlock* text = Cast<UTextBlock>(UIOverlay->GetWidgetFromName("StepsText"));
+	int32 SpeedLeftInTiles = SpeedLeft* SpeedInTiles / Speed;
+	text->SetText(FText::FromString("Steps left: "+ FString::FromInt(SpeedLeftInTiles)));
 }
 
 // Set attack goal (Enemy object only), is needed before pressing the attack button
