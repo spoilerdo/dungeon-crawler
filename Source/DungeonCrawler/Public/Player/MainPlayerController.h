@@ -3,6 +3,10 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "Enemy/EnemyCharacter.h"
+#include "Runtime/UMG/Public/UMG.h"
+#include "Runtime/UMG/Public/UMGStyle.h"
+#include "Runtime/UMG/Public/Slate/SObjectWidget.h"
+#include "Runtime/UMG/Public/IUMGModule.h"
 #include "Runtime/UMG/Public/Blueprint/UserWidget.h"
 #include "MainPlayerController.generated.h"
 
@@ -23,8 +27,6 @@ public:
 	int32 Speed;
 	UPROPERTY(EditAnywhere, Category = "PlayerStats", BlueprintReadWrite)
 	int32 AttackRange;
-	UPROPERTY(EditAnywhere, Category = "UI")
-	UUserWidget* UIOverlay;
 
 	// Round based system variables
 	FOnFinishRound FinishRound;
@@ -46,6 +48,9 @@ private:
 
 	int32 AttackToWorldMargin = 130;
 	AEnemyCharacter* AttackGoal;
+
+	TSubclassOf<UUserWidget> UIOverlayTClass;
+	UUserWidget* UIOverlay;
 
 	// Begin round when event is being called and it is your turn
 	void BeginRound(FString name);
