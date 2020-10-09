@@ -6,6 +6,7 @@
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "World/RoundBasedGameMode.h"
 #include "Enemy/EnemyCharacter.h"
+#include "UObject/ConstructorHelpers.h"
 #include "Runtime/UMG/Public/UMG.h"
 #include "Runtime/UMG/Public/UMGStyle.h"
 #include "Runtime/UMG/Public/Slate/SObjectWidget.h"
@@ -17,8 +18,9 @@ AMainPlayerController::AMainPlayerController() {
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Crosshairs;
 
-	static ConstructorHelpers::FClassFinder<UUserWidget> UIOverlayClass(TEXT("Blueprint'/Game/UI/GameOverlay'"));
-	if (UIOverlayClass.Class != NULL) {
+	ConstructorHelpers::FClassFinder<UUserWidget> UIOverlayClass(TEXT("/Game/UI/GameOverlay.GameOverlay_C"));
+	if (UIOverlayClass.Succeeded()) {
+		UE_LOG(LogTemp, Warning, TEXT("FOUND IT"));
 		UIOverlayTClass = UIOverlayClass.Class;
 	}
 }
