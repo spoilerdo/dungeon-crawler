@@ -44,6 +44,7 @@ public:
 private:
 	int32 SpeedToWorldMargin = 50;
 	int32 SpeedInTiles;
+	int32 SpeedLeft;
 	FVector DestLocation;
 	float Distance;
 
@@ -61,12 +62,14 @@ private:
 	void Move();
 	// Calculates distance and returns true if succesfull
 	bool CalcDistance();
-	// Calculate the speed that is left
+	// Displays the speed that is left for the user to use
 	void DisplaySpeedLeft();
 	// Set the attack goal of the character
 	void SetAttackGoal();
 	// Set render custom depth for outlining the enemy
 	void UpdateRenderCustomDepth(bool DepthValue);
+	// Displays the current phase of the player
+	void DisplayCurrentPhase(FString Phase);
 
 protected:
 	virtual void PlayerTick(float DeltaTime) override;

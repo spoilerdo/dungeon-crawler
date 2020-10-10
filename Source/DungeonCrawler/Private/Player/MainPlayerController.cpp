@@ -20,7 +20,6 @@ AMainPlayerController::AMainPlayerController() {
 
 	ConstructorHelpers::FClassFinder<UUserWidget> UIOverlayClass(TEXT("/Game/UI/GameOverlay.GameOverlay_C"));
 	if (UIOverlayClass.Succeeded()) {
-		UE_LOG(LogTemp, Warning, TEXT("FOUND IT"));
 		UIOverlayTClass = UIOverlayClass.Class;
 	}
 }
@@ -41,8 +40,8 @@ void AMainPlayerController::PlayerTick(float DeltaTime) {
 		if (!CalcDistance()) { return; }
 
 		// If the player reached the destination go to the next phase
-		if (Distance <= 120.0f) {
-			CurrentAction = 'A';
+		if (Distance <= 120.0f && SpeedLeft <= 0) {
+			NextPhase();
 		}
 	}
 }
@@ -56,6 +55,7 @@ void AMainPlayerController::BeginPlay() {
 	// Calc max walk distance by speed and margin
 	SpeedInTiles = Speed;
 	Speed = (Speed * 100) + (Speed * 100 / 2) + SpeedToWorldMargin;
+	SpeedLeft = Speed;
 	// Calc max attack distance by attack range and margin
 	AttackRange = (AttackRange * 100) + (AttackRange * 100 / 2) + AttackToWorldMargin;
 
@@ -67,12 +67,13 @@ void AMainPlayerController::BeginPlay() {
 void AMainPlayerController::BeginRound(FString name) {
 	if (name == PlayerName) {
 		CurrentAction = 'M';
+		DisplayCurrentPhase("Moving phase");
 	}
 }
 
 //Activates when mouse button is double pressed
 void AMainPlayerController::MoveToMouseCursor() {
-	if (CurrentAction != 'M' && CurrentAction != 'A') { return; }
+	if (CurrentAction != 'M' && CurrentAction != 'A') return;
 
 	// Trace to see what is under the mouse cursor
 	FHitResult Hit;
@@ -86,15 +87,15 @@ void AMainPlayerController::MoveToMouseCursor() {
 }
 
 void AMainPlayerController::Move() {
-	if (!CalcDistance()) { return; }
+	if (!CalcDistance()) return;
 
 	// We need to issue move command only if far enough in order for walk animation to play correctly
-	if (Distance > 120.0f && Distance <= Speed) {
+	if (Distance > 120.0f && Distance <= SpeedLeft) {
+		SpeedLeft -= Distance;
 		DisplaySpeedLeft();
 
 		// Begin moving so start tracking the distance the player needs yet to walk/ run
 		UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, DestLocation);
-		NextPhase();
 	}
 }
 
@@ -109,43 +110,46 @@ bool AMainPlayerController::CalcDistance() {
 }
 
 void AMainPlayerController::DisplaySpeedLeft() {
-	int32 SpeedLeft = Speed - Distance;
-
-	UTextBlock* text = Cast<UTextBlock>(UIOverlay->GetWidgetFromName("StepsText"));
-	int32 SpeedLeftInTiles = SpeedLeft* SpeedInTiles / Speed;
-	text->SetText(FText::FromString("Steps left: "+ FString::FromInt(SpeedLeftInTiles)));
+	UWidget* text = UIOverlay->GetWidgetFromName("StepsText");
+	int32 SpeedLeftInTiles = SpeedLeft * SpeedInTiles / Speed;
+	if(text != NULL) Cast<UTextBlock>(text)->SetText(FText::FromString("Steps left: "+ FString::FromInt(SpeedLeftInTiles)));
 }
 
 // Set attack goal (Enemy object only), is needed before pressing the attack button
 void AMainPlayerController::SetAttackGoal() {
-	if (CurrentAction != 'A') { return; }
+	if (CurrentAction != 'A') return;
 	FHitResult Hit;
 	GetHitResultUnderCursor(ECC_Visibility, false, Hit);
 
 	DestLocation = Hit.ImpactPoint;
-	if (!CalcDistance()) { return; }
+	if (!CalcDistance()) return;
 
 	if (Hit.bBlockingHit && Hit.GetActor()->ActorHasTag("Enemy") && Distance <= AttackRange) {
 		// We hit an enemy and its in range
-		if (AttackGoal != NULL) {
-			UpdateRenderCustomDepth(false);
-		}
+		UpdateRenderCustomDepth(false);
+
 		AttackGoal = Cast<AEnemyCharacter>(Hit.GetActor());
 		UpdateRenderCustomDepth(true);
 	}
 }
 
 void AMainPlayerController::UpdateRenderCustomDepth(bool DepthValue) {
+	if (AttackGoal == NULL) return;
 	USkeletalMeshComponent* Mesh = AttackGoal->GetMesh();
 	if (Mesh != NULL) {
 		Mesh->SetRenderCustomDepth(DepthValue);
 	}
 }
 
-void AMainPlayerController::Attack() {
-	if (CurrentAction != 'A' || AttackGoal == NULL) { return; }
+void AMainPlayerController::DisplayCurrentPhase(FString Phase) {
+	UWidget* text = UIOverlay->GetWidgetFromName("CurrentPhaseText");
+	if(text != NULL) Cast<UTextBlock>(text)->SetText(FText::FromString(Phase));
+}
 
-	const int hit = FMath::RandRange(2, 10);
+void AMainPlayerController::Attack() {
+	if (CurrentAction != 'A' || AttackGoal == NULL) return;
+
+	const int hit = FMath::RandRange(5, 10);
 	AttackGoal->DoDamage(hit, 1);
 
 	NextPhase();
@@ -154,11 +158,15 @@ void AMainPlayerController::Attack() {
 void AMainPlayerController::NextPhase() {
 	if (CurrentAction == 'M') {
 		// Second phase
+		SpeedLeft = Speed;
 		CurrentAction = 'A';
+		DisplayCurrentPhase("Attack phase");
 	}
 	else if (CurrentAction == 'A') {
 		// End phase
 		CurrentAction = NULL;
+		DisplayCurrentPhase("Enemy phase");
+		UpdateRenderCustomDepth(false);
 		FinishRound.Broadcast();
 		FinishRound.Clear();
 	}
