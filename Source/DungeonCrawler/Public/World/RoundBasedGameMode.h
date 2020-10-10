@@ -18,6 +18,9 @@ public:
 	FOnActivateRound ActivateRound;
 	UPROPERTY(EditAnywhere, Category = "Round base stats")
 	TArray<FString> rounds;
+
+	// Delete a player or enemy from the round
+	void DeleteRound(FString Tag);
 private:
 	int16 index;
 

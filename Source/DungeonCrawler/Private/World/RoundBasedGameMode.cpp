@@ -63,3 +63,8 @@ void ARoundBasedGameMode::EndRound() {
 	index += 1;
 	PlayRound();
 }
+
+void ARoundBasedGameMode::DeleteRound(FString Tag) {
+	rounds.RemoveSingle(Tag);
+	FString test = rounds.Last();
+}

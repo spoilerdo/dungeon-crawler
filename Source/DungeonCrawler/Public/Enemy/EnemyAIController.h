@@ -22,7 +22,7 @@ public:
 	// Round based system variables
 	FOnFinishAIRound FinishRound;
 	FString Name;
-	char CurrentAction;
+	bool MyTurn = false;
 private:
 	int32 SpeedToWorldMargin = 50;
 	FVector DestLocation;

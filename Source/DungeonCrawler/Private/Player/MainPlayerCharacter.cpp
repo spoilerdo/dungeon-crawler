@@ -1,5 +1,6 @@
 #include "Player/MainPlayerCharacter.h"
 #include "Player/MainPlayerController.h"
+#include "World/RoundBasedGameMode.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
 #include "Components/DecalComponent.h"
@@ -120,6 +121,8 @@ void AMainPlayerCharacter::DoDamage(int hit, int damage) {
 	if (hit >= AC) {
 		HP -= damage;
 		if (HP <= 0) {
+			ARoundBasedGameMode* GameMode = (ARoundBasedGameMode*)GetWorld()->GetAuthGameMode();
+			GameMode->DeleteRound(Tags[0].ToString());
 			Destroy();
 		}
 	}

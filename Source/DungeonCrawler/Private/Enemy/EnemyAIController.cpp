@@ -11,11 +11,12 @@ AEnemyAIController::AEnemyAIController() {
 void AEnemyAIController::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 
-	if (CurrentAction == 'M') {
-		if (!CalcDistance()) { return; }
-
+	if (MyTurn) {
+		if (!CalcDistance()) return;
+		
+		// TODO fix this if statement
 		if (Distance <= Speed || Distance <= 130.0f) {
-			CurrentAction = 'A';
+			UE_LOG(LogTemp, Warning, TEXT("ATTACK"));
 			StopMovement();
 			Attack();
 		}
@@ -41,12 +42,12 @@ void AEnemyAIController::BeginPlay() {
 void AEnemyAIController::BeginRound(FString name) {
 	if (name == Name) {
 		Move();
+		MyTurn = true;
 	}
 }
 
 void AEnemyAIController::Move() {
 	DestLocation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
-	CurrentAction = 'M';
 	MoveToLocation(DestLocation);
 }
 
@@ -73,6 +74,7 @@ void AEnemyAIController::Attack() {
 }
 
 void AEnemyAIController::EndRound() {
+	MyTurn = false;
 	FinishRound.Broadcast();
 	FinishRound.Clear();
 }
