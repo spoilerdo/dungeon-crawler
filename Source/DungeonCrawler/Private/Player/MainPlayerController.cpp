@@ -3,6 +3,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/DecalComponent.h"
 #include "Components/TextBlock.h"
+#include "Components/ProgressBar.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "World/RoundBasedGameMode.h"
 #include "Enemy/EnemyCharacter.h"
@@ -53,7 +54,6 @@ void AMainPlayerController::BeginPlay() {
 	UIOverlay->AddToViewport(9999);
 
 	// Calc max walk distance by speed and margin
-	SpeedInTiles = Speed;
 	Speed = (Speed * 100) + (Speed * 100 / 2) + SpeedToWorldMargin;
 	SpeedLeft = Speed;
 	// Calc max attack distance by attack range and margin
@@ -110,9 +110,9 @@ bool AMainPlayerController::CalcDistance() {
 }
 
 void AMainPlayerController::DisplaySpeedLeft() {
-	UWidget* text = UIOverlay->GetWidgetFromName("StepsText");
-	int32 SpeedLeftInTiles = SpeedLeft * SpeedInTiles / Speed;
-	if(text != NULL) Cast<UTextBlock>(text)->SetText(FText::FromString("Steps left: "+ FString::FromInt(SpeedLeftInTiles)));
+	UWidget* bar = UIOverlay->GetWidgetFromName("StaminaBar");
+	float progress = (float)SpeedLeft / (float)Speed;
+	if (bar != NULL) Cast<UProgressBar>(bar)->SetPercent(progress);
 }
 
 // Set attack goal (Enemy object only), is needed before pressing the attack button
@@ -134,7 +134,7 @@ void AMainPlayerController::SetAttackGoal() {
 }
 
 void AMainPlayerController::UpdateRenderCustomDepth(bool DepthValue) {
-	if (AttackGoal == NULL) return;
+	if (!AttackGoal) return;
 	USkeletalMeshComponent* Mesh = AttackGoal->GetMesh();
 	if (Mesh != NULL) {
 		Mesh->SetRenderCustomDepth(DepthValue);

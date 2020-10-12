@@ -57,6 +57,9 @@ private:
 	void YawCamera(float AxisValue);
 	void CalcYaw();
 
+	void DisplayHP();
+	void DisplayAC();
+
 protected:
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;

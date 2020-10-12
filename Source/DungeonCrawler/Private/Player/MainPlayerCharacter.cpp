@@ -5,6 +5,8 @@
 #include "Camera/CameraComponent.h"
 #include "Components/DecalComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/TextBlock.h"
+#include "Components/ProgressBar.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -120,10 +122,27 @@ void AMainPlayerCharacter::CalcYaw() {
 void AMainPlayerCharacter::DoDamage(int hit, int damage) {
 	if (hit >= AC) {
 		HP -= damage;
+		DisplayHP();
 		if (HP <= 0) {
 			ARoundBasedGameMode* GameMode = (ARoundBasedGameMode*)GetWorld()->GetAuthGameMode();
 			GameMode->DeleteRound(Tags[0].ToString());
 			Destroy();
 		}
+	}
+}
+
+void AMainPlayerCharacter::DisplayHP() {
+	if (AMainPlayerController* PC = Cast<AMainPlayerController>(GetController())) {
+		UWidget* bar = PC->UIOverlay->GetWidgetFromName("HPBar");
+		float progress = (float)HP;
+		if (bar != NULL) Cast<UProgressBar>(bar)->SetPercent(progress);
+	}
+}
+
+void AMainPlayerCharacter::DisplayAC() {
+	if (AMainPlayerController* PC = Cast<AMainPlayerController>(GetController())) {
+		UWidget* text = PC->UIOverlay->GetWidgetFromName("ACText");
+		FString ACText = "AC" + FString::FromInt(AC);
+		if (text != NULL) Cast<UTextBlock>(text)->SetText(FText::FromString(ACText));
 	}
 }

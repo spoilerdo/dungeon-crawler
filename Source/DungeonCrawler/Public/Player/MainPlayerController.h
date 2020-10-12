@@ -41,9 +41,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "PhaseSystem")
 	void NextPhase();
 
+	UUserWidget* UIOverlay;
+
 private:
 	int32 SpeedToWorldMargin = 50;
-	int32 SpeedInTiles;
 	int32 SpeedLeft;
 	FVector DestLocation;
 	float Distance;
@@ -52,7 +53,6 @@ private:
 	AEnemyCharacter* AttackGoal;
 
 	TSubclassOf<UUserWidget> UIOverlayTClass;
-	UUserWidget* UIOverlay;
 
 	// Begin round when event is being called and it is your turn
 	void BeginRound(FString name);
