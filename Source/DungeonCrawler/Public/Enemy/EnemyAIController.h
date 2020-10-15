@@ -27,6 +27,7 @@ private:
 	int32 SpeedToWorldMargin = 50;
 	FVector DestLocation;
 	float Distance;
+	bool TargetInRange = false;
 
 	int32 AttackToWorldMargin = 130;
 

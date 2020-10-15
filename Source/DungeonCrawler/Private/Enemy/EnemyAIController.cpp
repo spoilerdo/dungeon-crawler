@@ -14,11 +14,17 @@ void AEnemyAIController::Tick(float DeltaTime) {
 	if (MyTurn) {
 		if (!CalcDistance()) return;
 		
-		// TODO fix this if statement
-		if (Distance <= Speed || Distance <= 130.0f) {
-			UE_LOG(LogTemp, Warning, TEXT("ATTACK"));
+		// If target is in range with the given Speed, walk until the attack range is met or it is adjacent.
+		if (TargetInRange && (Distance <= AttackRange || Distance <= 120.0f)) {
 			StopMovement();
 			Attack();
+		}
+		// Taget is not in range so walk until no Speed is left
+		else if (!TargetInRange) {
+			if (Distance <= Speed) {
+				StopMovement();
+				Attack();
+			}
 		}
 	}
 }
@@ -41,11 +47,17 @@ void AEnemyAIController::BeginPlay() {
 
 void AEnemyAIController::BeginRound(FString name) {
 	if (name == Name) {
+		if (!CalcDistance()) return;
+		// Check if target is in range
+		TargetInRange = Distance <= Speed;
+
+		// First phase is the movind phase
 		Move();
 		MyTurn = true;
 	}
 }
 
+// Move to the player (target)
 void AEnemyAIController::Move() {
 	DestLocation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
 	MoveToLocation(DestLocation);
