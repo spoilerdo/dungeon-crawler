@@ -55,6 +55,13 @@ AMainPlayerCharacter::AMainPlayerCharacter()
 	PrimaryActorTick.bStartWithTickEnabled = true;
 }
 
+void AMainPlayerCharacter::BeginPlay() {
+	Super::BeginPlay();
+
+	MaxHp = HP;
+	DisplayAC();
+}
+
 void AMainPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
@@ -70,8 +77,7 @@ void AMainPlayerCharacter::YawCamera(float AxisValue) {
 	CameraInput.X = FMath::Clamp<float>(AxisValue, -1.0f, 1.0f);
 }
 
-void AMainPlayerCharacter::Tick(float DeltaSeconds)
-{
+void AMainPlayerCharacter::Tick(float DeltaSeconds) {
     Super::Tick(DeltaSeconds);
 
 	//Blend our camera's FOV and our SpringArm's length based on ZoomFactor
@@ -134,7 +140,7 @@ void AMainPlayerCharacter::DoDamage(int hit, int damage) {
 void AMainPlayerCharacter::DisplayHP() {
 	if (AMainPlayerController* PC = Cast<AMainPlayerController>(GetController())) {
 		UWidget* bar = PC->UIOverlay->GetWidgetFromName("HPBar");
-		float progress = (float)HP;
+		float progress = (float)HP / (float)MaxHp;
 		if (bar != NULL) Cast<UProgressBar>(bar)->SetPercent(progress);
 	}
 }
@@ -142,7 +148,7 @@ void AMainPlayerCharacter::DisplayHP() {
 void AMainPlayerCharacter::DisplayAC() {
 	if (AMainPlayerController* PC = Cast<AMainPlayerController>(GetController())) {
 		UWidget* text = PC->UIOverlay->GetWidgetFromName("ACText");
-		FString ACText = "AC" + FString::FromInt(AC);
+		FString ACText = FString::FromInt(AC) + "\nAC";
 		if (text != NULL) Cast<UTextBlock>(text)->SetText(FText::FromString(ACText));
 	}
 }

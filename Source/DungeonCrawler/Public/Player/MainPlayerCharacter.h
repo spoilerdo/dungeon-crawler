@@ -45,6 +45,9 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UDecalComponent* CursorToWorld;
 
+	// Max hp that will be used to calculate the progress for the HP bar
+	int MaxHp;
+
 	// Input variables
 	FVector2D CameraInput;
 	float ZoomFactor;
@@ -63,4 +66,5 @@ private:
 protected:
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
+	virtual void BeginPlay() override;
 };
