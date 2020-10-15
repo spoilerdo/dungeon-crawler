@@ -41,7 +41,7 @@ void AMainPlayerController::PlayerTick(float DeltaTime) {
 		if (!CalcDistance()) { return; }
 
 		// If the player reached the destination go to the next phase
-		if (Distance <= 120.0f && SpeedLeft <= 0) {
+		if (Distance <= 120.0f && SpeedLeft <= 120.0f) {
 			NextPhase();
 		}
 	}
@@ -111,7 +111,9 @@ bool AMainPlayerController::CalcDistance() {
 
 void AMainPlayerController::DisplaySpeedLeft() {
 	UWidget* bar = UIOverlay->GetWidgetFromName("StaminaBar");
-	float progress = (float)SpeedLeft / (float)Speed;
+	float progress = SpeedLeft / (float)Speed;
+	if (progress <= 0.150) { progress = 0; }
+
 	if (bar != NULL) Cast<UProgressBar>(bar)->SetPercent(progress);
 }
 
@@ -159,6 +161,7 @@ void AMainPlayerController::NextPhase() {
 	if (CurrentAction == 'M') {
 		// Second phase
 		SpeedLeft = Speed;
+		DisplaySpeedLeft();
 		CurrentAction = 'A';
 		DisplayCurrentPhase("Attack phase");
 	}

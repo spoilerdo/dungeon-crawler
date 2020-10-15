@@ -49,7 +49,7 @@ private:
 	FVector2D CameraInput;
 	float ZoomFactor;
 
-	void CalculateDecal(int32 MaxDistance);
+	void CalculateDecal(float MaxDistance);
 
 	// Input functions
 	void Zoom(float AxisValue);

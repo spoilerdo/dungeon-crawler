@@ -89,12 +89,12 @@ void AMainPlayerCharacter::Tick(float DeltaSeconds)
 			FRotator CursorR = CursorFV.Rotation();
 			CursorToWorld->SetWorldLocation(TraceHitResult.Location);
 			CursorToWorld->SetWorldRotation(CursorR);
-			CalculateDecal(PC->Speed);
+			CalculateDecal(PC->SpeedLeft);
 		}
 	}
 }
 
-void AMainPlayerCharacter::CalculateDecal(int32 MaxDistance) {
+void AMainPlayerCharacter::CalculateDecal(float MaxDistance) {
 	float const Distance = FVector::Dist(CursorToWorld->GetComponentLocation(), GetActorLocation());
 	if (Distance > MaxDistance && CursorToWorld->GetDecalMaterial() == DecalMaterial) {
 		CursorToWorld->SetDecalMaterial(DecalMaterialUnavailable);

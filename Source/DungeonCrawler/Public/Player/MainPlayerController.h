@@ -25,6 +25,7 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "PlayerStats", BlueprintReadWrite)
 	int32 Speed;
+	float SpeedLeft;
 	UPROPERTY(EditAnywhere, Category = "PlayerStats", BlueprintReadWrite)
 	int32 AttackRange;
 
@@ -45,7 +46,6 @@ public:
 
 private:
 	int32 SpeedToWorldMargin = 50;
-	int32 SpeedLeft;
 	FVector DestLocation;
 	float Distance;
 
