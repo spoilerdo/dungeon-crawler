@@ -25,7 +25,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Character stats", BlueprintReadWrite)
 	int AC;
 
-	void DoDamage(int hit, int damage);
+	void DoDamage(const int& hit, const int& damage);
 
 	// Returns TopDownCameraComponent subobject
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
@@ -52,7 +52,7 @@ private:
 	FVector2D CameraInput;
 	float ZoomFactor;
 
-	void CalculateDecal(float MaxDistance);
+	void CalculateDecal(float& MaxDistance);
 
 	// Input functions
 	void Zoom(float AxisValue);

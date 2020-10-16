@@ -18,6 +18,8 @@ public:
 	int32 Speed;
 	UPROPERTY(EditAnywhere, Category = "EnemyStats", BlueprintReadWrite)
 	int32 AttackRange;
+	UPROPERTY(EditAnywhere, Category = "EnemyStats", BlueprintReadWrite)
+	int32 Damage;
 
 	// Round based system variables
 	FOnFinishAIRound FinishRound;
@@ -32,7 +34,7 @@ private:
 	int32 AttackToWorldMargin = 130;
 
 	// Begin round when event is being called and it is your turn
-	void BeginRound(FString name);
+	void BeginRound(const FString& name);
 	void Move();
 	// Calculates distance and returns true if successful
 	bool CalcDistance();

@@ -19,5 +19,5 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Character stats", BlueprintReadWrite)
 	int AC;
 
-	void DoDamage(int hit, int damage);
+	void DoDamage(const int& hit, const int& damage);
 };

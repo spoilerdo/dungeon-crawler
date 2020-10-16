@@ -28,6 +28,8 @@ public:
 	float SpeedLeft;
 	UPROPERTY(EditAnywhere, Category = "PlayerStats", BlueprintReadWrite)
 	int32 AttackRange;
+	UPROPERTY(EditAnywhere, Category = "PlayerStats", BlueprintReadWrite)
+	int32 Damage;
 
 	// Round based system variables
 	FOnFinishRound FinishRound;
@@ -55,7 +57,7 @@ private:
 	TSubclassOf<UUserWidget> UIOverlayTClass;
 
 	// Begin round when event is being called and it is your turn
-	void BeginRound(FString name);
+	void BeginRound(const FString& name);
 	// Navigate player to the current mouse cursor location.
 	void MoveToMouseCursor();
 	// Navigate player to the given world location
@@ -67,9 +69,9 @@ private:
 	// Set the attack goal of the character
 	void SetAttackGoal();
 	// Set render custom depth for outlining the enemy
-	void UpdateRenderCustomDepth(bool DepthValue);
+	void UpdateRenderCustomDepth(const bool& DepthValue);
 	// Displays the current phase of the player
-	void DisplayCurrentPhase(FString Phase);
+	void DisplayCurrentPhase(const FString& Phase);
 
 protected:
 	virtual void PlayerTick(float DeltaTime) override;

@@ -21,25 +21,25 @@ ARoundBasedGameMode::ARoundBasedGameMode() {
 void ARoundBasedGameMode::StartPlay() {
 	Super::StartPlay();	
 	
-	rounds.Init("P1", 1);
-	rounds.Push("E1");
-	rounds.Push("E2");
+	Rounds.Init("P1", 1);
+	Rounds.Push("E1");
+	Rounds.Push("E2");
 	// Load in first round
 	PlayRound();
 }
 
 void ARoundBasedGameMode::PlayRound() {
 	// Check if rounds are ended if it is, reset it
-	if (index >= rounds.Num()) { index = 0; }
+	if (Index >= Rounds.Num()) { Index = 0; }
 
 	// Get next player
 	TArray<AActor*> foundActors;
-	UGameplayStatics::GetAllActorsWithTag(GetWorld(), *rounds[index], foundActors);
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), *Rounds[Index], foundActors);
 
 	if (foundActors.Num() > 0) {
 		AActor* actor = foundActors[0];
 		
-		if (rounds[index].Contains("P")) {
+		if (Rounds[Index].Contains("P")) {
 			AMainPlayerController* PC = Cast<AMainPlayerController>(UGameplayStatics::GetPlayerController(actor, 0));
 			if (PC != NULL) {
 				// Bind the player's end round event to EndRound
@@ -54,17 +54,31 @@ void ARoundBasedGameMode::PlayRound() {
 		}
 
 		// Activate the round by broadcasting event to all controllers
-		ActivateRound.Broadcast(*rounds[index]);
+		ActivateRound.Broadcast(Rounds[Index]);
 	}
 }
 
 void ARoundBasedGameMode::EndRound() {
+	// Check if objective is met
+
+
 	// Got to the next round
-	index += 1;
+	Index += 1;
 	PlayRound();
 }
 
-void ARoundBasedGameMode::DeleteRound(FString Tag) {
-	rounds.RemoveSingle(Tag);
-	FString test = rounds.Last();
+void ARoundBasedGameMode::CheckObjective() {
+
+}
+
+UFUNCTION(exec)
+void ARoundBasedGameMode::UpdateObjective(FString& EnemyTag, int16& NewEnemyObjectives, FVector& NewDestination) {
+	if (NewEnemyObjectives) {
+
+	}
+}
+
+void ARoundBasedGameMode::DeleteRound(FString& Tag) {
+	Rounds.RemoveSingle(Tag);
+	FString test = Rounds.Last();
 }

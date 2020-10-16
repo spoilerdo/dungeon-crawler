@@ -35,6 +35,7 @@ void AEnemyAIController::BeginPlay() {
 	// Calc max walk distance by speed and margin
 	Speed = (Speed * 100) + (Speed * 100 / 2) + SpeedToWorldMargin;
 	// Calc max attack distance by attack range and margin
+	AttackRange -= 1;
 	AttackRange = (AttackRange * 100) + (AttackRange * 100 / 2) + AttackToWorldMargin;
 
 	AActor* ActorCharacter = GetPawn();
@@ -45,7 +46,7 @@ void AEnemyAIController::BeginPlay() {
 	GameMode->ActivateRound.AddUObject(this, &AEnemyAIController::BeginRound);
 }
 
-void AEnemyAIController::BeginRound(FString name) {
+void AEnemyAIController::BeginRound(const FString& name) {
 	if (name == Name) {
 		if (!CalcDistance()) return;
 		// Check if target is in range
@@ -78,7 +79,7 @@ void AEnemyAIController::Attack() {
 		AMainPlayerCharacter* AttackGoal = Cast<AMainPlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
 		if (AttackGoal) {
 			const int hit = FMath::RandRange(2, 10);
-			AttackGoal->DoDamage(hit, 1);
+			AttackGoal->DoDamage(hit, Damage);
 		}
 	}
 

@@ -4,12 +4,13 @@
 AEnemyCharacter::AEnemyCharacter()
 {}
 
-void AEnemyCharacter::DoDamage(int hit, int damage) {
+void AEnemyCharacter::DoDamage(const int& hit, const int& damage) {
 	if (hit >= AC) {
 		HP -= damage;
 		if (HP <= 0) {
 			ARoundBasedGameMode* GameMode = (ARoundBasedGameMode*)GetWorld()->GetAuthGameMode();
-			GameMode->DeleteRound(Tags[1].ToString());
+			FString tag = Tags[1].ToString();
+			GameMode->DeleteRound(tag);
 			Destroy();
 		}
 	}

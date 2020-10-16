@@ -100,7 +100,7 @@ void AMainPlayerCharacter::Tick(float DeltaSeconds) {
 	}
 }
 
-void AMainPlayerCharacter::CalculateDecal(float MaxDistance) {
+void AMainPlayerCharacter::CalculateDecal(float& MaxDistance) {
 	float const Distance = FVector::Dist(CursorToWorld->GetComponentLocation(), GetActorLocation());
 	if (Distance > MaxDistance && CursorToWorld->GetDecalMaterial() == DecalMaterial) {
 		CursorToWorld->SetDecalMaterial(DecalMaterialUnavailable);
@@ -125,13 +125,14 @@ void AMainPlayerCharacter::CalcYaw() {
 	CameraBoom->SetWorldRotation(NewRotation);
 }
 
-void AMainPlayerCharacter::DoDamage(int hit, int damage) {
+void AMainPlayerCharacter::DoDamage(const int& hit, const int& damage) {
 	if (hit >= AC) {
 		HP -= damage;
 		DisplayHP();
 		if (HP <= 0) {
 			ARoundBasedGameMode* GameMode = (ARoundBasedGameMode*)GetWorld()->GetAuthGameMode();
-			GameMode->DeleteRound(Tags[0].ToString());
+			FString tag = Tags[0].ToString();
+			GameMode->DeleteRound(tag);
 			Destroy();
 		}
 	}

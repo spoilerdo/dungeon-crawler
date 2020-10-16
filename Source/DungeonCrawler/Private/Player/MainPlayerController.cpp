@@ -57,6 +57,7 @@ void AMainPlayerController::BeginPlay() {
 	Speed = (Speed * 100) + (Speed * 100 / 2) + SpeedToWorldMargin;
 	SpeedLeft = Speed;
 	// Calc max attack distance by attack range and margin
+	AttackRange -= 1;
 	AttackRange = (AttackRange * 100) + (AttackRange * 100 / 2) + AttackToWorldMargin;
 
 	// Bind round based system event to BeginRound method
@@ -64,7 +65,7 @@ void AMainPlayerController::BeginPlay() {
 	GameMode->ActivateRound.AddUObject(this, &AMainPlayerController::BeginRound);
 }
 
-void AMainPlayerController::BeginRound(FString name) {
+void AMainPlayerController::BeginRound(const FString& name) {
 	if (name == PlayerName) {
 		CurrentAction = 'M';
 		DisplayCurrentPhase("Moving phase");
@@ -135,7 +136,7 @@ void AMainPlayerController::SetAttackGoal() {
 	}
 }
 
-void AMainPlayerController::UpdateRenderCustomDepth(bool DepthValue) {
+void AMainPlayerController::UpdateRenderCustomDepth(const bool& DepthValue) {
 	if (!AttackGoal) return;
 	USkeletalMeshComponent* Mesh = AttackGoal->GetMesh();
 	if (Mesh != NULL) {
@@ -143,7 +144,7 @@ void AMainPlayerController::UpdateRenderCustomDepth(bool DepthValue) {
 	}
 }
 
-void AMainPlayerController::DisplayCurrentPhase(FString Phase) {
+void AMainPlayerController::DisplayCurrentPhase(const FString& Phase) {
 	UWidget* text = UIOverlay->GetWidgetFromName("CurrentPhaseText");
 	if(text != NULL) Cast<UTextBlock>(text)->SetText(FText::FromString(Phase));
 }
@@ -152,7 +153,7 @@ void AMainPlayerController::Attack() {
 	if (CurrentAction != 'A' || AttackGoal == NULL) return;
 
 	const int hit = FMath::RandRange(5, 10);
-	AttackGoal->DoDamage(hit, 1);
+	AttackGoal->DoDamage(hit, Damage);
 
 	NextPhase();
 }
