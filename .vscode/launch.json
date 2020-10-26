@@ -1,0 +1,128 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "DungeonCrawler (Debug)",
+			"request": "launch",
+			"preLaunchTask": "DungeonCrawler Win64 Debug Build",
+			"program": "D:\\Documenten\\_School\\minor\\DungeonCrawler\\Binaries\\Win64\\UE4-Win64-Debug.exe",
+			"args": [
+			],
+			"cwd": "C:\\Program Files\\UE_4.25",
+			"stopAtEntry": false,
+			"externalConsole": true,
+			"type": "cppvsdbg",
+			"visualizerFile": "C:\\Program Files\\UE_4.25\\Engine\\Extras\\VisualStudioDebugging\\UE4.natvis"
+		},
+		{
+			"name": "DungeonCrawler (DebugGame)",
+			"request": "launch",
+			"preLaunchTask": "DungeonCrawler Win64 DebugGame Build",
+			"program": "D:\\Documenten\\_School\\minor\\DungeonCrawler\\Binaries\\Win64\\UE4-Win64-DebugGame.exe",
+			"args": [
+			],
+			"cwd": "C:\\Program Files\\UE_4.25",
+			"stopAtEntry": false,
+			"externalConsole": true,
+			"type": "cppvsdbg",
+			"visualizerFile": "C:\\Program Files\\UE_4.25\\Engine\\Extras\\VisualStudioDebugging\\UE4.natvis"
+		},
+		{
+			"name": "DungeonCrawler (Development)",
+			"request": "launch",
+			"preLaunchTask": "DungeonCrawler Win64 Development Build",
+			"program": "D:\\Documenten\\_School\\minor\\DungeonCrawler\\Binaries\\Win64\\UE4.exe",
+			"args": [
+			],
+			"cwd": "C:\\Program Files\\UE_4.25",
+			"stopAtEntry": false,
+			"externalConsole": true,
+			"type": "cppvsdbg",
+			"visualizerFile": "C:\\Program Files\\UE_4.25\\Engine\\Extras\\VisualStudioDebugging\\UE4.natvis"
+		},
+		{
+			"name": "DungeonCrawler (Shipping)",
+			"request": "launch",
+			"preLaunchTask": "DungeonCrawler Win64 Shipping Build",
+			"program": "D:\\Documenten\\_School\\minor\\DungeonCrawler\\Binaries\\Win64\\UE4-Win64-Shipping.exe",
+			"args": [
+			],
+			"cwd": "C:\\Program Files\\UE_4.25",
+			"stopAtEntry": false,
+			"externalConsole": true,
+			"type": "cppvsdbg",
+			"visualizerFile": "C:\\Program Files\\UE_4.25\\Engine\\Extras\\VisualStudioDebugging\\UE4.natvis"
+		},
+		{
+			"name": "DungeonCrawler (Test)",
+			"request": "launch",
+			"preLaunchTask": "DungeonCrawler Win64 Test Build",
+			"program": "D:\\Documenten\\_School\\minor\\DungeonCrawler\\Binaries\\Win64\\UE4-Win64-Test.exe",
+			"args": [
+			],
+			"cwd": "C:\\Program Files\\UE_4.25",
+			"stopAtEntry": false,
+			"externalConsole": true,
+			"type": "cppvsdbg",
+			"visualizerFile": "C:\\Program Files\\UE_4.25\\Engine\\Extras\\VisualStudioDebugging\\UE4.natvis"
+		},
+		{
+			"name": "DungeonCrawlerEditor (Debug)",
+			"request": "launch",
+			"preLaunchTask": "DungeonCrawlerEditor Win64 Debug Build",
+			"program": "C:\\Program Files\\UE_4.25\\Engine\\Binaries\\Win64\\UE4Editor-Win64-Debug.exe",
+			"args": [
+				"D:\\Documenten\\_School\\minor\\DungeonCrawler\\DungeonCrawler.uproject"
+			],
+			"cwd": "C:\\Program Files\\UE_4.25",
+			"stopAtEntry": false,
+			"externalConsole": true,
+			"type": "cppvsdbg",
+			"visualizerFile": "C:\\Program Files\\UE_4.25\\Engine\\Extras\\VisualStudioDebugging\\UE4.natvis"
+		},
+		{
+			"name": "DungeonCrawlerEditor (DebugGame)",
+			"request": "launch",
+			"preLaunchTask": "DungeonCrawlerEditor Win64 DebugGame Build",
+			"program": "C:\\Program Files\\UE_4.25\\Engine\\Binaries\\Win64\\UE4Editor-Win64-DebugGame.exe",
+			"args": [
+				"D:\\Documenten\\_School\\minor\\DungeonCrawler\\DungeonCrawler.uproject"
+			],
+			"cwd": "C:\\Program Files\\UE_4.25",
+			"stopAtEntry": false,
+			"externalConsole": true,
+			"type": "cppvsdbg",
+			"visualizerFile": "C:\\Program Files\\UE_4.25\\Engine\\Extras\\VisualStudioDebugging\\UE4.natvis"
+		},
+		{
+			"name": "DungeonCrawlerEditor (Development)",
+			"request": "launch",
+			"preLaunchTask": "DungeonCrawlerEditor Win64 Development Build",
+			"program": "C:\\Program Files\\UE_4.25\\Engine\\Binaries\\Win64\\UE4Editor.exe",
+			"args": [
+				"D:\\Documenten\\_School\\minor\\DungeonCrawler\\DungeonCrawler.uproject"
+			],
+			"cwd": "C:\\Program Files\\UE_4.25",
+			"stopAtEntry": false,
+			"externalConsole": true,
+			"type": "cppvsdbg",
+			"visualizerFile": "C:\\Program Files\\UE_4.25\\Engine\\Extras\\VisualStudioDebugging\\UE4.natvis"
+		},
+		{
+			"name": "Generate Project Files",
+			"type": "clr",
+			"request": "launch",
+			"program": "C:\\Program Files\\UE_4.25\\Engine\\Binaries\\DotNET\\UnrealBuildTool.exe",
+			"console": "externalTerminal",
+			"args": [
+				"-projectfiles",
+				"-vscode",
+				"-project=\"D:\\Documenten\\_School\\minor\\DungeonCrawler\\DungeonCrawler.uproject\"",
+				"-game",
+				"-engine"
+			],
+			"internalConsoleOptions": "openOnSessionStart",
+			"cwd": "C:\\Program Files\\UE_4.25"
+		}
+	]
+}

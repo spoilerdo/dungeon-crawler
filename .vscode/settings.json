@@ -1,0 +1,12 @@
+{
+	"files.exclude": {
+		"D:/Documenten/_School/minor/DungeonCrawler/.git": true,
+		"D:/Documenten/_School/minor/DungeonCrawler/.vs": true,
+		"D:/Documenten/_School/minor/DungeonCrawler/.vscode": true,
+		"D:/Documenten/_School/minor/DungeonCrawler/Builds": true,
+		"D:/Documenten/_School/minor/DungeonCrawler/Content": true,
+		"D:/Documenten/_School/minor/DungeonCrawler/DerivedDataCache": true,
+		"D:/Documenten/_School/minor/DungeonCrawler/Intermediate": true,
+		"D:/Documenten/_School/minor/DungeonCrawler/Saved": true
+	}
+}

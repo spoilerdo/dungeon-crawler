@@ -71,9 +71,12 @@ void ARoundBasedGameMode::CheckObjective() {
 
 }
 
-UFUNCTION(exec)
 void ARoundBasedGameMode::UpdateObjective(FString& EnemyTag, int16& NewEnemyObjectives, FVector& NewDestination) {
+	// This will check if the player has killed any new enemies or reached the specified destination
 	if (NewEnemyObjectives) {
+		if (EnemyTag == EnemyObjectiveTag) {
+			// Killed a new enemy and it is an objective enemy so up the counter
+		}
 
 	}
 }

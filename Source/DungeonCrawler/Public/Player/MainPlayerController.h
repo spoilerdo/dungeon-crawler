@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "Enemy/EnemyCharacter.h"
+#include "UI/UIOverlay.h"
 #include "Runtime/UMG/Public/UMG.h"
 #include "Runtime/UMG/Public/UMGStyle.h"
 #include "Runtime/UMG/Public/Slate/SObjectWidget.h"
@@ -44,7 +45,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "PhaseSystem")
 	void NextPhase();
 
-	UUserWidget* UIOverlay;
+	UUIOverlay* UIOverlay;
 
 private:
 	int32 SpeedToWorldMargin = 50;

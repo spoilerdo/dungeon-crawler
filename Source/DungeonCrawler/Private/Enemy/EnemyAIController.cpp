@@ -60,8 +60,10 @@ void AEnemyAIController::BeginRound(const FString& name) {
 
 // Move to the player (target)
 void AEnemyAIController::Move() {
-	DestLocation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
-	MoveToLocation(DestLocation);
+	if (APlayerController* PC = GetWorld()->GetFirstPlayerController()) {
+		DestLocation = PC->GetPawn()->GetActorLocation();
+		MoveToLocation(DestLocation);
+	}
 }
 
 bool AEnemyAIController::CalcDistance() {

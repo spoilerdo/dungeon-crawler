@@ -7,6 +7,7 @@
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "World/RoundBasedGameMode.h"
 #include "Enemy/EnemyCharacter.h"
+#include "UI/UIOverlay.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Runtime/UMG/Public/UMG.h"
 #include "Runtime/UMG/Public/UMGStyle.h"
@@ -19,7 +20,7 @@ AMainPlayerController::AMainPlayerController() {
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Crosshairs;
 
-	ConstructorHelpers::FClassFinder<UUserWidget> UIOverlayClass(TEXT("/Game/UI/GameOverlay.GameOverlay_C"));
+	ConstructorHelpers::FClassFinder<UUIOverlay> UIOverlayClass(TEXT("/Game/UI/GameOverlay.GameOverlay_C"));
 	if (UIOverlayClass.Succeeded()) {
 		UIOverlayTClass = UIOverlayClass.Class;
 	}
@@ -50,7 +51,7 @@ void AMainPlayerController::PlayerTick(float DeltaTime) {
 void AMainPlayerController::BeginPlay() {
 	Super::BeginPlay();
 
-	UIOverlay = CreateWidget<UUserWidget>(this, UIOverlayTClass);
+	UIOverlay = CreateWidget<UUIOverlay>(this, UIOverlayTClass);
 	UIOverlay->AddToViewport(9999);
 
 	// Calc max walk distance by speed and margin

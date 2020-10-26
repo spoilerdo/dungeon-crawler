@@ -129,6 +129,9 @@ void AMainPlayerCharacter::DoDamage(const int& hit, const int& damage) {
 	if (hit >= AC) {
 		HP -= damage;
 		DisplayHP();
+		if (AMainPlayerController* PC = Cast<AMainPlayerController>(GetController())) {
+			PC->UIOverlay->OnAttacked();
+		}
 		if (HP <= 0) {
 			ARoundBasedGameMode* GameMode = (ARoundBasedGameMode*)GetWorld()->GetAuthGameMode();
 			FString tag = Tags[0].ToString();
