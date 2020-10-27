@@ -87,8 +87,9 @@ void AMainPlayerCharacter::Tick(float DeltaSeconds) {
 
 	if (CursorToWorld != nullptr)
 	{
-		if (AMainPlayerController* PC = Cast<AMainPlayerController>(GetController()))
-		{
+		if (AMainPlayerController* PC = Cast<AMainPlayerController>(GetController())) {
+			if(PC->InputDisabled) { return; }
+			
 			FHitResult TraceHitResult;
 			PC->GetHitResultUnderCursor(ECC_Visibility, true, TraceHitResult);
 			FVector CursorFV = TraceHitResult.ImpactNormal;

@@ -47,6 +47,9 @@ public:
 
 	UUIOverlay* UIOverlay;
 
+	bool InputDisabled = false;
+	void DisableController(class APlayerController* PlayerController);
+
 private:
 	int32 SpeedToWorldMargin = 50;
 	FVector DestLocation;

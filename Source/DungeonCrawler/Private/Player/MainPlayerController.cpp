@@ -20,7 +20,7 @@ AMainPlayerController::AMainPlayerController() {
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Crosshairs;
 
-	ConstructorHelpers::FClassFinder<UUIOverlay> UIOverlayClass(TEXT("/Game/UI/GameOverlay.GameOverlay_C"));
+	ConstructorHelpers::FClassFinder<UUIOverlay> UIOverlayClass(TEXT("/Game/UI/WBP_GameOverlay.WBP_GameOverlay_C"));
 	if (UIOverlayClass.Succeeded()) {
 		UIOverlayTClass = UIOverlayClass.Class;
 	}
@@ -32,6 +32,11 @@ void AMainPlayerController::SetupInputComponent() {
 
 	InputComponent->BindAction("SetDestination", IE_DoubleClick, this, &AMainPlayerController::MoveToMouseCursor);
 	InputComponent->BindAction("SetAttackGoal", IE_Released, this, &AMainPlayerController::SetAttackGoal);
+}
+
+void AMainPlayerController::DisableController(class APlayerController* PlayerController) {
+	DisableInput(PlayerController);
+	InputDisabled = true;
 }
 
 void AMainPlayerController::PlayerTick(float DeltaTime) {
