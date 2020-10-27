@@ -17,4 +17,7 @@ public:
 	
 	UFUNCTION(BlueprintImplementableEvent, Category = "UI Overlay events")
 	void OnAttacked();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "UI Overlay events")
+	void OnShowEndGamePanel();
 };

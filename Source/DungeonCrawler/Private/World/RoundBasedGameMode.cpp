@@ -32,23 +32,16 @@ void ARoundBasedGameMode::PlayRound() {
 	// Check if rounds are ended if it is, reset it
 	if (Index >= Rounds.Num()) { Index = 0; }
 
-	// Get next player
-	TArray<AActor*> foundActors;
-	UGameplayStatics::GetAllActorsWithTag(GetWorld(), *Rounds[Index], foundActors);
-
-	if (foundActors.Num() > 0) {
-		AActor* actor = foundActors[0];
-		
+	// Get next player/ enemy
+	if(AActor* actor = GetActorByTag(Rounds[Index])) {
 		if (Rounds[Index].Contains("P")) {
-			AMainPlayerController* PC = Cast<AMainPlayerController>(UGameplayStatics::GetPlayerController(actor, 0));
-			if (PC != NULL) {
+			if (AMainPlayerController* PC = Cast<AMainPlayerController>(UGameplayStatics::GetPlayerController(actor, 0))) {
 				// Bind the player's end round event to EndRound
 				PC->FinishRound.AddUObject(this, &ARoundBasedGameMode::EndRound);
 			}
 		}
 		else {
-			AEnemyAIController* AC = Cast<AEnemyAIController>(UAIBlueprintHelperLibrary::GetAIController(actor));
-			if (AC != NULL) {
+			if (AEnemyAIController* AC = Cast<AEnemyAIController>(UAIBlueprintHelperLibrary::GetAIController(actor))) {
 				AC->FinishRound.AddUObject(this, &ARoundBasedGameMode::EndRound);
 			}
 		}
@@ -58,26 +51,48 @@ void ARoundBasedGameMode::PlayRound() {
 	}
 }
 
+AActor* ARoundBasedGameMode::GetActorByTag(FString& Tag) {
+	TArray<AActor*> foundActors;
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), *Tag, foundActors);
+	if (foundActors.Num() > 0) {
+		return foundActors[0];
+	} else {
+		return NULL;
+	}
+}
+
 void ARoundBasedGameMode::EndRound() {
-	// Check if objective is met
-
-
 	// Got to the next round
 	Index += 1;
 	PlayRound();
 }
 
-void ARoundBasedGameMode::CheckObjective() {
-
+void ARoundBasedGameMode::UpdateEnemyObjective(FString& EnemyTag) {
+	// Check if the enemy is part of the objective
+	if (EnemyTag == EnemyObjectiveTag) {
+		// Killed a new enemy and it is an objective enemy so up the counter
+		CurrentAmountOfEnemyKilled++;
+		if (CurrentAmountOfEnemyKilled >= AmountOfEnemyObjectives) {
+			EndGame();
+		}
+	}
 }
 
-void ARoundBasedGameMode::UpdateObjective(FString& EnemyTag, int16& NewEnemyObjectives, FVector& NewDestination) {
-	// This will check if the player has killed any new enemies or reached the specified destination
-	if (NewEnemyObjectives) {
-		if (EnemyTag == EnemyObjectiveTag) {
-			// Killed a new enemy and it is an objective enemy so up the counter
-		}
+void ARoundBasedGameMode::UpdateDestinationObjective(FVector& NewDestination) {
+	// Check if the player reached the destination
+	if(NewDestination.Equals(Destination, 1.0f)) {
+		EndGame();
+	}
+}
 
+void ARoundBasedGameMode::EndGame() {
+	// First round is always the player
+	if(AActor* actor = GetActorByTag(Rounds[0])) {
+		if (AMainPlayerController* PC = Cast<AMainPlayerController>(UGameplayStatics::GetPlayerController(actor, 0))) {
+			// Call endgame animation on UIOverlay and disable controls for player
+			PC->UIOverlay->OnShowEndGamePanel();
+			PC->DisableInput(PC);
+		}
 	}
 }
 
