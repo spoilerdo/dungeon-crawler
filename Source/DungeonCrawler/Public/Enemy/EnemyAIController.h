@@ -2,15 +2,16 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
+#include "Base/ControllerInterface.h"
 #include "EnemyAIController.generated.h"
 
 DECLARE_EVENT(AEnemyAIController, FOnFinishAIRound)
 
 UCLASS()
-class DUNGEONCRAWLER_API AEnemyAIController : public AAIController
+class DUNGEONCRAWLER_API AEnemyAIController : public AAIController, public IControllerInterface
 {
 	GENERATED_BODY()
-	
+
 public:
 	AEnemyAIController();
 
@@ -27,21 +28,18 @@ public:
 	bool MyTurn = false;
 private:
 	int32 SpeedToWorldMargin = 50;
-	FVector DestLocation;
-	float Distance;
 	bool TargetInRange = false;
 
 	int32 AttackToWorldMargin = 130;
 
-	// Begin round when event is being called and it is your turn
-	void BeginRound(const FString& name);
-	void Move();
-	// Calculates distance and returns true if successful
-	bool CalcDistance();
-	void Attack();
 	void EndRound();
 
 protected:
+	// Begin round when event is being called and it is your turn
+	virtual void BeginRound(const FString& name) override;
+	virtual void Move() override;
+	virtual void Attack() override;
+
 	virtual void Tick(float DeltaTime) override;
 	virtual void BeginPlay() override;
 };

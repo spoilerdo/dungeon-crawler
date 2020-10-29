@@ -44,7 +44,7 @@ void AMainPlayerController::PlayerTick(float DeltaTime) {
 
 	// When moving check if you reached destination
 	if (CurrentAction == 'M') {
-		if (!CalcDistance()) { return; }
+		if (!CalcDistance(GetPawn())) { return; }
 
 		// If the player reached the destination go to the next phase
 		if (Distance <= 120.0f && SpeedLeft <= 120.0f) {
@@ -94,7 +94,7 @@ void AMainPlayerController::MoveToMouseCursor() {
 }
 
 void AMainPlayerController::Move() {
-	if (!CalcDistance()) return;
+	if (!CalcDistance(GetPawn())) return;
 
 	// We need to issue move command only if far enough in order for walk animation to play correctly
 	if (Distance > 120.0f && Distance <= SpeedLeft) {
@@ -104,16 +104,6 @@ void AMainPlayerController::Move() {
 		// Begin moving so start tracking the distance the player needs yet to walk/ run
 		UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, DestLocation);
 	}
-}
-
-bool AMainPlayerController::CalcDistance() {
-	APawn* const MyPawn = GetPawn();
-	if (MyPawn) {
-		Distance = FVector::Dist(DestLocation, MyPawn->GetActorLocation());
-		return true;
-	}
-
-	return false;
 }
 
 void AMainPlayerController::DisplaySpeedLeft() {
@@ -131,7 +121,7 @@ void AMainPlayerController::SetAttackGoal() {
 	GetHitResultUnderCursor(ECC_Visibility, false, Hit);
 
 	DestLocation = Hit.ImpactPoint;
-	if (!CalcDistance()) return;
+	if (!CalcDistance(GetPawn())) return;
 
 	if (Hit.bBlockingHit && Hit.GetActor()->ActorHasTag("Enemy") && Distance <= AttackRange) {
 		// We hit an enemy and its in range

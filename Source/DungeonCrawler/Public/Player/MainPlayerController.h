@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "Base/ControllerInterface.h"
 #include "Enemy/EnemyCharacter.h"
 #include "UI/UIOverlay.h"
 #include "Runtime/UMG/Public/UMG.h"
@@ -17,7 +18,7 @@ DECLARE_EVENT(AMainPlayerController, FOnFinishRound)
  * Main player controller
  */
 UCLASS()
-class DUNGEONCRAWLER_API AMainPlayerController : public APlayerController
+class DUNGEONCRAWLER_API AMainPlayerController : public APlayerController, public IControllerInterface
 {
 	GENERATED_BODY()
 
@@ -37,10 +38,6 @@ public:
 	FString PlayerName = "P1";
 	char CurrentAction;
 
-	// Attack the goal
-	UFUNCTION(BlueprintCallable, Category = "AttackSystem")
-	void Attack();
-
 	// Go to the next phase or use it to skip a method
 	UFUNCTION(BlueprintCallable, Category = "PhaseSystem")
 	void NextPhase();
@@ -52,22 +49,14 @@ public:
 
 private:
 	int32 SpeedToWorldMargin = 50;
-	FVector DestLocation;
-	float Distance;
 
 	int32 AttackToWorldMargin = 130;
 	AEnemyCharacter* AttackGoal;
 
 	TSubclassOf<UUserWidget> UIOverlayTClass;
 
-	// Begin round when event is being called and it is your turn
-	void BeginRound(const FString& name);
 	// Navigate player to the current mouse cursor location.
 	void MoveToMouseCursor();
-	// Navigate player to the given world location
-	void Move();
-	// Calculates distance and returns true if succesfull
-	bool CalcDistance();
 	// Displays the speed that is left for the user to use
 	void DisplaySpeedLeft();
 	// Set the attack goal of the character
@@ -78,6 +67,13 @@ private:
 	void DisplayCurrentPhase(const FString& Phase);
 
 protected:
+	// Begin round when event is being called and it is your turn
+	virtual void BeginRound(const FString& name) override;
+	// Navigate player to the given world location
+	virtual void Move() override;
+	UFUNCTION(BlueprintCallable, Category = "AttackSystem")
+	virtual void Attack() override;
+
 	virtual void PlayerTick(float DeltaTime) override;
 	virtual void SetupInputComponent() override;
 	virtual void BeginPlay() override;

@@ -3,7 +3,6 @@
 #include "Player/MainPlayerCharacter.h"
 #include "Runtime/AIModule/Classes/Blueprint/AIBlueprintHelperLibrary.h"
 
-
 AEnemyAIController::AEnemyAIController() {
 
 }
@@ -12,14 +11,14 @@ void AEnemyAIController::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 
 	if (MyTurn) {
-		if (!CalcDistance()) return;
+		if (!CalcDistance(GetPawn())) return;
 		
 		// If target is in range with the given Speed, walk until the attack range is met or it is adjacent.
 		if (TargetInRange && (Distance <= AttackRange || Distance <= 120.0f)) {
 			StopMovement();
 			Attack();
 		}
-		// Taget is not in range so walk until no Speed is left
+		// Target is not in range so walk until no Speed is left
 		else if (!TargetInRange) {
 			if (Distance <= Speed) {
 				StopMovement();
@@ -48,7 +47,7 @@ void AEnemyAIController::BeginPlay() {
 
 void AEnemyAIController::BeginRound(const FString& name) {
 	if (name == Name) {
-		if (!CalcDistance()) return;
+		if (!CalcDistance(GetPawn())) return;
 		// Check if target is in range
 		TargetInRange = Distance <= Speed;
 
@@ -64,16 +63,6 @@ void AEnemyAIController::Move() {
 		DestLocation = PC->GetPawn()->GetActorLocation();
 		MoveToLocation(DestLocation);
 	}
-}
-
-bool AEnemyAIController::CalcDistance() {
-	APawn* const MyPawn = GetPawn();
-	if (MyPawn) {
-		Distance = FVector::Dist(DestLocation, MyPawn->GetActorLocation());
-		return true;
-	}
-
-	return false;
 }
 
 void AEnemyAIController::Attack() {
