@@ -5,27 +5,21 @@
 #include "GameFramework/Character.h"
 #include "MainPlayerCharacter.generated.h"
 
+/**
+ * Main player character that contains a third person camera.
+ * It has a decal system for the mouse, also a yaw and zoom functionality.
+ * Lastly it contains a health system.
+ */
 UCLASS(Blueprintable)
 class DUNGEONCRAWLER_API AMainPlayerCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
+/**
+ * Input related variables and methods
+ */
 public:
 	AMainPlayerCharacter();
-
-	UPROPERTY(EditAnywhere, Category = "Decals", BlueprintReadWrite)
-	UMaterial* DecalMaterial;
-	UPROPERTY(EditAnywhere, Category = "Decals", BlueprintReadWrite)
-	UMaterial* DecalMaterialUnavailable;
-	
-	// Health Points
-	UPROPERTY(EditAnywhere, Category = "Character stats", BlueprintReadWrite)
-	int HP;
-	// Armor Combat
-	UPROPERTY(EditAnywhere, Category = "Character stats", BlueprintReadWrite)
-	int AC;
-
-	void DoDamage(const int& hit, const int& damage);
 
 	// Returns TopDownCameraComponent subobject
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
@@ -33,6 +27,11 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	// Returns CursorToWorld subobject
 	FORCEINLINE class UDecalComponent* GetCursorToWorld() { return CursorToWorld; }
+
+	UPROPERTY(EditAnywhere, Category = "Decals", BlueprintReadWrite)
+	UMaterial* DecalMaterial;
+	UPROPERTY(EditAnywhere, Category = "Decals", BlueprintReadWrite)
+	UMaterial* DecalMaterialUnavailable;
 
 private:
 	// Top down camera
@@ -45,14 +44,11 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UDecalComponent* CursorToWorld;
 
-	// Max hp that will be used to calculate the progress for the HP bar
-	int MaxHp;
+	void CalculateDecal(float& MaxDistance);
 
 	// Input variables
 	FVector2D CameraInput;
 	float ZoomFactor;
-
-	void CalculateDecal(float& MaxDistance);
 
 	// Input functions
 	void Zoom(float AxisValue);
@@ -60,9 +56,29 @@ private:
 	void YawCamera(float AxisValue);
 	void CalcYaw();
 
+/**
+ * Health system related variables and methods
+ */
+public:
+	// Health Points
+	UPROPERTY(EditAnywhere, Category = "Character stats", BlueprintReadWrite)
+	int HP;
+	// Armor Combat
+	UPROPERTY(EditAnywhere, Category = "Character stats", BlueprintReadWrite)
+	int AC;
+
+	void DoDamage(const int& hit, const int& damage);
+
+private:
+	// Max hp that will be used to calculate the progress for the HP bar
+	int MaxHp;
+
 	void DisplayHP();
 	void DisplayAC();
 
+/**
+ * Player character inherited methods
+ */
 protected:
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;

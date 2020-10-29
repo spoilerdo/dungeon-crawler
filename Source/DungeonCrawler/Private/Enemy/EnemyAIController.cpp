@@ -57,7 +57,6 @@ void AEnemyAIController::BeginRound(const FString& name) {
 	}
 }
 
-// Move to the player (target)
 void AEnemyAIController::Move() {
 	if (APlayerController* PC = GetWorld()->GetFirstPlayerController()) {
 		DestLocation = PC->GetPawn()->GetActorLocation();

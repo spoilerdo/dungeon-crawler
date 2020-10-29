@@ -15,7 +15,8 @@
 DECLARE_EVENT(AMainPlayerController, FOnFinishRound)
 
 /**
- * Main player controller
+ * Main player controller with an move and attack system.
+ * It is also attached to a round based system gamemode.
  */
 UCLASS()
 class DUNGEONCRAWLER_API AMainPlayerController : public APlayerController, public IControllerInterface
@@ -24,16 +25,51 @@ class DUNGEONCRAWLER_API AMainPlayerController : public APlayerController, publi
 
 public:
 	AMainPlayerController();
-
+/**
+ * Moving system related variables and methods
+ */
 	UPROPERTY(EditAnywhere, Category = "PlayerStats", BlueprintReadWrite)
 	int32 Speed;
 	float SpeedLeft;
+
+protected:
+	// Navigate player to the given world location
+	virtual void Move() override;
+
+private:
+	int32 SpeedToWorldMargin = 50;
+
+	// Navigate player to the current mouse cursor location. Activates when mouse button is double pressed
+	void MoveToMouseCursor();
+	// Displays the speed that is left for the user to use
+	void DisplaySpeedLeft();
+
+/**
+ * Attack system related variables and methods
+ */
+public:
 	UPROPERTY(EditAnywhere, Category = "PlayerStats", BlueprintReadWrite)
 	int32 AttackRange;
 	UPROPERTY(EditAnywhere, Category = "PlayerStats", BlueprintReadWrite)
 	int32 Damage;
 
-	// Round based system variables
+protected:
+	UFUNCTION(BlueprintCallable, Category = "AttackSystem")
+	virtual void Attack() override;
+
+private:
+	int32 AttackToWorldMargin = 130;
+	AEnemyCharacter* AttackGoal;
+
+	// Set attack goal (Enemy object only), is needed before pressing the attack button
+	void SetAttackGoal();
+	// Set render custom depth for outlining/ highlighting the enemy
+	void UpdateRenderCustomDepth(const bool& DepthValue);
+
+/**
+ * Round based system related variables and methods
+ */
+public:
 	FOnFinishRound FinishRound;
 	FString PlayerName = "P1";
 	char CurrentAction;
@@ -48,32 +84,17 @@ public:
 	void DisableController(class APlayerController* PlayerController);
 
 private:
-	int32 SpeedToWorldMargin = 50;
-
-	int32 AttackToWorldMargin = 130;
-	AEnemyCharacter* AttackGoal;
-
 	TSubclassOf<UUserWidget> UIOverlayTClass;
 
-	// Navigate player to the current mouse cursor location.
-	void MoveToMouseCursor();
-	// Displays the speed that is left for the user to use
-	void DisplaySpeedLeft();
-	// Set the attack goal of the character
-	void SetAttackGoal();
-	// Set render custom depth for outlining the enemy
-	void UpdateRenderCustomDepth(const bool& DepthValue);
-	// Displays the current phase of the player
 	void DisplayCurrentPhase(const FString& Phase);
 
 protected:
 	// Begin round when event is being called and it is your turn
 	virtual void BeginRound(const FString& name) override;
-	// Navigate player to the given world location
-	virtual void Move() override;
-	UFUNCTION(BlueprintCallable, Category = "AttackSystem")
-	virtual void Attack() override;
 
+/**
+ * Player controller inherited methods
+ */
 	virtual void PlayerTick(float DeltaTime) override;
 	virtual void SetupInputComponent() override;
 	virtual void BeginPlay() override;

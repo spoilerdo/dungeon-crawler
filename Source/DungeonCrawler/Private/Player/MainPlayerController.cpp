@@ -78,7 +78,6 @@ void AMainPlayerController::BeginRound(const FString& name) {
 	}
 }
 
-//Activates when mouse button is double pressed
 void AMainPlayerController::MoveToMouseCursor() {
 	if (CurrentAction != 'M' && CurrentAction != 'A') return;
 
@@ -114,7 +113,6 @@ void AMainPlayerController::DisplaySpeedLeft() {
 	if (bar != NULL) Cast<UProgressBar>(bar)->SetPercent(progress);
 }
 
-// Set attack goal (Enemy object only), is needed before pressing the attack button
 void AMainPlayerController::SetAttackGoal() {
 	if (CurrentAction != 'A') return;
 	FHitResult Hit;
@@ -138,11 +136,6 @@ void AMainPlayerController::UpdateRenderCustomDepth(const bool& DepthValue) {
 	if (Mesh != NULL) {
 		Mesh->SetRenderCustomDepth(DepthValue);
 	}
-}
-
-void AMainPlayerController::DisplayCurrentPhase(const FString& Phase) {
-	UWidget* text = UIOverlay->GetWidgetFromName("CurrentPhaseText");
-	if(text != NULL) Cast<UTextBlock>(text)->SetText(FText::FromString(Phase));
 }
 
 void AMainPlayerController::Attack() {
@@ -170,4 +163,9 @@ void AMainPlayerController::NextPhase() {
 		FinishRound.Broadcast();
 		FinishRound.Clear();
 	}
+}
+
+void AMainPlayerController::DisplayCurrentPhase(const FString& Phase) {
+	UWidget* text = UIOverlay->GetWidgetFromName("CurrentPhaseText");
+	if(text != NULL) Cast<UTextBlock>(text)->SetText(FText::FromString(Phase));
 }

@@ -17,7 +17,6 @@ ARoundBasedGameMode::ARoundBasedGameMode() {
 	}
 }
 
-// Start playing the game
 void ARoundBasedGameMode::StartPlay() {
 	Super::StartPlay();	
 	
