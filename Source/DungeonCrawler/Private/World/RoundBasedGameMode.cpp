@@ -24,13 +24,16 @@ void ARoundBasedGameMode::StartPlay() {
 	Rounds.Init("P1", 1);
 	Rounds.Push("E1");
 	Rounds.Push("E2");
+	Rounds.Push("E3");
 	// Load in first round
 	PlayRound();
 }
 
 void ARoundBasedGameMode::PlayRound() {
 	// Check if rounds are ended if it is, reset it
-	if (Index >= Rounds.Num()) { Index = 0; }
+	if (Index >= 2) {
+		Index = 0;
+	}
 
 	// Get next player/ enemy
 	if(AActor* actor = GetActorByTag(Rounds[Index])) {
