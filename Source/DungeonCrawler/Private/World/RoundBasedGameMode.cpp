@@ -21,17 +21,18 @@ ARoundBasedGameMode::ARoundBasedGameMode() {
 void ARoundBasedGameMode::StartPlay() {
 	Super::StartPlay();	
 	
-	Rounds.Init("P1", 1);
-	Rounds.Push("E1");
-	Rounds.Push("E2");
-	Rounds.Push("E3");
+	if(Rounds.Num() == 0) {
+		UE_LOG(LogTemp, Error, TEXT("No rounds specified!! Cannot play a game with no rounds"));
+		return;
+	}
+
 	// Load in first round
 	PlayRound();
 }
 
 void ARoundBasedGameMode::PlayRound() {
 	// Check if rounds are ended if it is, reset it
-	if (Index >= 2) {
+	if (Index >= Rounds.Num()) {
 		Index = 0;
 	}
 

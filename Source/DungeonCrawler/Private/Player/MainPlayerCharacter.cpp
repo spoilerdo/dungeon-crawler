@@ -70,7 +70,7 @@ void AMainPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 }
 
 void AMainPlayerCharacter::Zoom(float AxisValue) {
-	ZoomFactor = AxisValue;
+	ZoomFactor = -AxisValue;
 }
 
 void AMainPlayerCharacter::YawCamera(float AxisValue) {
