@@ -87,6 +87,7 @@ private:
 	TSubclassOf<UUserWidget> UIOverlayTClass;
 
 	void DisplayNextPhase(const FString& Phase);
+	void ToggleAttackUI(const bool& Visible);
 
 protected:
 	// Begin round when event is being called and it is your turn

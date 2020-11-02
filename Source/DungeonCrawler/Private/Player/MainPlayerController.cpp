@@ -154,11 +154,13 @@ void AMainPlayerController::NextPhase() {
 		DisplaySpeedLeft();
 		CurrentAction = 'A';
 		DisplayNextPhase("Attack phase");
+		ToggleAttackUI(true);
 	}
 	else if (CurrentAction == 'A') {
 		// End phase
 		CurrentAction = NULL;
 		DisplayNextPhase("Enemy phase");
+		ToggleAttackUI(false);
 		UpdateRenderCustomDepth(false);
 		FinishRound.Broadcast();
 		FinishRound.Clear();
@@ -173,4 +175,10 @@ void AMainPlayerController::DisplayNextPhase(const FString& Phase) {
 	if(nPhaseText != NULL) Cast<UTextBlock>(nPhaseText)->SetText(FText::FromString(Phase));
 
 	UIOverlay->OnChangePhase();
+}
+
+void AMainPlayerController::ToggleAttackUI(const bool& Visible) {
+	// TODO: fix when attack panel is added
+	UWidget* button = UIOverlay->GetWidgetFromName("AttackButton");
+	if(button != NULL) Cast<UButton>(button)->SetVisibility(Visible ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 }
