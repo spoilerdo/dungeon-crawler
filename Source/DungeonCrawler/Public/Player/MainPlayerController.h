@@ -86,7 +86,7 @@ public:
 private:
 	TSubclassOf<UUserWidget> UIOverlayTClass;
 
-	void DisplayCurrentPhase(const FString& Phase);
+	void DisplayNextPhase(const FString& Phase);
 
 protected:
 	// Begin round when event is being called and it is your turn

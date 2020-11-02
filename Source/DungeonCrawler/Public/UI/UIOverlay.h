@@ -20,4 +20,7 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "UI Overlay events")
 	void OnShowEndGamePanel();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "UI Overlay events")
+	void OnChangePhase();
 };

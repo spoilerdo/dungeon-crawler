@@ -74,7 +74,7 @@ void AMainPlayerController::BeginPlay() {
 void AMainPlayerController::BeginRound(const FString& name) {
 	if (name == PlayerName) {
 		CurrentAction = 'M';
-		DisplayCurrentPhase("Moving phase");
+		DisplayNextPhase("Moving phase");
 	}
 }
 
@@ -153,19 +153,24 @@ void AMainPlayerController::NextPhase() {
 		SpeedLeft = Speed;
 		DisplaySpeedLeft();
 		CurrentAction = 'A';
-		DisplayCurrentPhase("Attack phase");
+		DisplayNextPhase("Attack phase");
 	}
 	else if (CurrentAction == 'A') {
 		// End phase
 		CurrentAction = NULL;
-		DisplayCurrentPhase("Enemy phase");
+		DisplayNextPhase("Enemy phase");
 		UpdateRenderCustomDepth(false);
 		FinishRound.Broadcast();
 		FinishRound.Clear();
 	}
 }
 
-void AMainPlayerController::DisplayCurrentPhase(const FString& Phase) {
-	UWidget* text = UIOverlay->GetWidgetFromName("CurrentPhaseText");
-	if(text != NULL) Cast<UTextBlock>(text)->SetText(FText::FromString(Phase));
+void AMainPlayerController::DisplayNextPhase(const FString& Phase) {
+	UWidget* cPhaseText = UIOverlay->GetWidgetFromName("CurrentPhaseText");
+	if(cPhaseText != NULL) Cast<UTextBlock>(cPhaseText)->SetText(FText::FromString(Phase));
+
+	UWidget* nPhaseText = UIOverlay->GetWidgetFromName("NextPhaseText");
+	if(nPhaseText != NULL) Cast<UTextBlock>(nPhaseText)->SetText(FText::FromString(Phase));
+
+	UIOverlay->OnChangePhase();
 }
