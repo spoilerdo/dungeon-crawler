@@ -64,7 +64,6 @@ void AMainPlayerController::BeginPlay() {
 	Speed = (Speed * 100) + (Speed * 100 / 2) + SpeedToWorldMargin;
 	SpeedLeft = Speed;
 	// Calc max attack distance by attack range and margin
-	AttackRange -= 1;
 	AttackRange = (AttackRange * 100) + (AttackRange * 100 / 2) + AttackToWorldMargin;
 
 	// Bind round based system event to BeginRound method
@@ -80,14 +79,14 @@ void AMainPlayerController::BeginRound(const FString& name) {
 }
 
 void AMainPlayerController::MoveToMouseCursor() {
-	if (CurrentAction != 'M' && CurrentAction != 'A') return;
+	if (CurrentAction != 'M') return;
 
 	// Trace to see what is under the mouse cursor
 	FHitResult Hit;
 	GetHitResultUnderCursor(ECC_Visibility, false, Hit);
 
-	if (Hit.bBlockingHit) {
-		// We hit something, move there
+	if (Hit.bBlockingHit && !Hit.GetActor()->ActorHasTag("Enemy")) {
+		// We hit something and it is not an enemy, move there
 		DestLocation = Hit.ImpactPoint;
 		Move();
 	}

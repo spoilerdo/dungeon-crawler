@@ -80,9 +80,9 @@ void AMainPlayerCharacter::YawCamera(float AxisValue) {
 void AMainPlayerCharacter::Tick(float DeltaSeconds) {
     Super::Tick(DeltaSeconds);
 
-	//Blend our camera's FOV and our SpringArm's length based on ZoomFactor
+	// Blend the camera's FOV and the SpringArm's length based on ZoomFactor
 	CalcZoom();
-	//Rotate our actor's yaw, which will turn our camera because we're attached to it
+	// Rotate the actor's yaw, which will turn the camera because we're attached to it
 	CalcYaw();
 
 	if (CursorToWorld != nullptr)
@@ -90,13 +90,21 @@ void AMainPlayerCharacter::Tick(float DeltaSeconds) {
 		if (AMainPlayerController* PC = Cast<AMainPlayerController>(GetController())) {
 			if(PC->InputDisabled) { return; }
 			
+			// Update cursor to mouse position
 			FHitResult TraceHitResult;
 			PC->GetHitResultUnderCursor(ECC_Visibility, true, TraceHitResult);
 			FVector CursorFV = TraceHitResult.ImpactNormal;
 			FRotator CursorR = CursorFV.Rotation();
 			CursorToWorld->SetWorldLocation(TraceHitResult.Location);
 			CursorToWorld->SetWorldRotation(CursorR);
-			CalculateDecal(PC->SpeedLeft);
+			
+			// Change the decal range according to the current phase (attack or move)
+			if (PC->CurrentAction == 'M') {
+				CalculateDecal(PC->SpeedLeft);
+			} else {
+				float AttackRange = (float) PC->AttackRange;
+				CalculateDecal(AttackRange);
+			}
 		}
 	}
 }
@@ -113,10 +121,10 @@ void AMainPlayerCharacter::CalculateDecal(float& MaxDistance) {
 
 void AMainPlayerCharacter::CalcZoom() {
 	ZoomFactor *= 2;
-	float NewFOV = TopDownCameraComponent->FieldOfView += ZoomFactor / 2;
+	const float NewFOV = TopDownCameraComponent->FieldOfView += ZoomFactor / 2;
 	TopDownCameraComponent->FieldOfView = FMath::Clamp<float>(NewFOV, 60.0f, 90.0f);
 
-	float NewArmLength = CameraBoom->TargetArmLength += ZoomFactor;
+	const float NewArmLength = CameraBoom->TargetArmLength += ZoomFactor;
 	CameraBoom->TargetArmLength = FMath::Clamp<float>(NewArmLength, 600.0f, 800.0f);
 }
 
