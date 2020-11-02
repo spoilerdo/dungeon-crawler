@@ -169,12 +169,19 @@ void AMainPlayerController::NextPhase() {
 }
 
 void AMainPlayerController::DisplayNextPhase(const FString& Phase) {
+	// Text on the top right
 	UWidget* cPhaseText = UIOverlay->GetWidgetFromName("CurrentPhaseText");
 	if(cPhaseText != NULL) Cast<UTextBlock>(cPhaseText)->SetText(FText::FromString(Phase));
 
+	// Text of the skip button
+	UWidget* skipBtnText = UIOverlay->GetWidgetFromName("SkipButtonText");
+	if(skipBtnText != NULL) Cast<UTextBlock>(skipBtnText)->SetText(FText::FromString("Skip " + Phase));
+
+	// Text of the animation
 	UWidget* nPhaseText = UIOverlay->GetWidgetFromName("NextPhaseText");
 	if(nPhaseText != NULL) Cast<UTextBlock>(nPhaseText)->SetText(FText::FromString(Phase));
 
+	// Play animation
 	UIOverlay->OnChangePhase();
 }
 
