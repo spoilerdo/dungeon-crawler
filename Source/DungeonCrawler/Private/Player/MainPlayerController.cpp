@@ -31,7 +31,8 @@ void AMainPlayerController::SetupInputComponent() {
 	Super::SetupInputComponent();
 
 	InputComponent->BindAction("SetDestination", IE_DoubleClick, this, &AMainPlayerController::MoveToMouseCursor);
-	InputComponent->BindAction("SetAttackGoal", IE_Released, this, &AMainPlayerController::SetAttackGoal);
+	InputComponent->BindAction("R_SetAttackGoal", IE_Released, this, &AMainPlayerController::SetAttackGoal);
+	InputComponent->BindAction("L_SetAttackGoal", IE_DoubleClick, this, &AMainPlayerController::SetAttackGoal);
 }
 
 void AMainPlayerController::DisableController(class APlayerController* PlayerController) {
