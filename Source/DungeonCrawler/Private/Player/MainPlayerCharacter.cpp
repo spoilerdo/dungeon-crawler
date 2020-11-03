@@ -147,7 +147,6 @@ void AMainPlayerCharacter::DoDamage(const int& hit, const int& damage) {
 			ARoundBasedGameMode* GameMode = (ARoundBasedGameMode*)GetWorld()->GetAuthGameMode();
 			FString tag = Tags[0].ToString();
 			GameMode->DeleteRound(tag);
-			Destroy();
 		}
 	}
 }

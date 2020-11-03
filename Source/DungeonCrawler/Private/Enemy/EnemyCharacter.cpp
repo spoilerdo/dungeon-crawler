@@ -6,8 +6,6 @@ AEnemyCharacter::AEnemyCharacter()
 
 void AEnemyCharacter::DoDamage(const int& hit, const int& damage) {
 	if (hit >= AC) {
-		IsHit = true;
-
 		HP -= damage;
 		if (HP <= 0) {
 			ARoundBasedGameMode* GameMode = (ARoundBasedGameMode*)GetWorld()->GetAuthGameMode();
@@ -15,7 +13,10 @@ void AEnemyCharacter::DoDamage(const int& hit, const int& damage) {
 			FString sortTag = Tags[0].ToString();
 			GameMode->DeleteRound(tag);
 			GameMode->UpdateEnemyObjective(sortTag);
-			Destroy();
+
+			IsDead = true;
+		} else {
+			IsHit = true;
 		}
 	}
 }

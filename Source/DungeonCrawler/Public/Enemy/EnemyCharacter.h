@@ -25,4 +25,7 @@ public:
 	void DoneDamageAnim();
 
 	void DoDamage(const int& hit, const int& damage);
+
+	UPROPERTY(BlueprintReadOnly, Category = "Death system")
+	bool IsDead;
 };

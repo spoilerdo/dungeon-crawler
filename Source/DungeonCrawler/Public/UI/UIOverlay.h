@@ -19,7 +19,7 @@ public:
 	void OnAttacked();
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "UI Overlay events")
-	void OnShowEndGamePanel();
+	void OnShowEndGamePanel(const FString& Text);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "UI Overlay events")
 	void OnChangePhase();

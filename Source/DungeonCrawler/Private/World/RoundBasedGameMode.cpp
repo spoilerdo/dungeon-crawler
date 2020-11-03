@@ -76,7 +76,7 @@ void ARoundBasedGameMode::UpdateEnemyObjective(FString& EnemyTag) {
 		// Killed a new enemy and it is an objective enemy so up the counter
 		CurrentAmountOfEnemyKilled++;
 		if (CurrentAmountOfEnemyKilled >= AmountOfEnemyObjectives) {
-			EndGame();
+			EndGame("Victory!!");
 		}
 	}
 }
@@ -84,22 +84,27 @@ void ARoundBasedGameMode::UpdateEnemyObjective(FString& EnemyTag) {
 void ARoundBasedGameMode::UpdateDestinationObjective(FVector& NewDestination) {
 	// Check if the player reached the destination
 	if(NewDestination.Equals(Destination, 1.0f)) {
-		EndGame();
+		EndGame("Victory!!");
 	}
 }
 
-void ARoundBasedGameMode::EndGame() {
+void ARoundBasedGameMode::EndGame(const FString& Text) {
 	// First round is always the player
 	if(AActor* actor = GetActorByTag(Rounds[0])) {
-		if (AMainPlayerController* PC = Cast<AMainPlayerController>(UGameplayStatics::GetPlayerController(actor, 0))) {
+		if(AMainPlayerController* PC = Cast<AMainPlayerController>(UGameplayStatics::GetPlayerController(actor, 0))) {
 			// Call endgame animation on UIOverlay and disable controls for player
-			PC->UIOverlay->OnShowEndGamePanel();
+			PC->UIOverlay->OnShowEndGamePanel(Text);
 			PC->DisableController(PC);
 		}
 	}
 }
 
 void ARoundBasedGameMode::DeleteRound(FString& Tag) {
+	if(Tag.Contains("P")) {
+		EndGame("Fail!!");
+		return;
+	}
+
 	Rounds.RemoveSingle(Tag);
 	FString test = Rounds.Last();
 }

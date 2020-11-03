@@ -45,7 +45,7 @@ private:
 	// The round has ended prepare for the next round
 	void EndRound();
 	// The player finished his objective so end the game
-	void EndGame();
+	void EndGame(const FString& Text);
 
 protected:
 	virtual void StartPlay() override;
