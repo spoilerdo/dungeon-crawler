@@ -40,6 +40,11 @@ public:
 	UPROPERTY(EditAnywhere, Category = "EnemyStats", BlueprintReadWrite)
 	int32 Damage;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Attack system")
+	bool IsAttacking;
+	UFUNCTION(BlueprintCallable, Category = "Attack system")
+	void DoneAttackingAnim();
+
 protected:
 	virtual void Attack() override;
 

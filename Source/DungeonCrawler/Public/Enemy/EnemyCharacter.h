@@ -19,5 +19,10 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Character stats", BlueprintReadWrite)
 	int AC;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Damage system")
+	bool IsHit;
+	UFUNCTION(BlueprintCallable, Category = "Damage system")
+	void DoneDamageAnim();
+
 	void DoDamage(const int& hit, const int& damage);
 };

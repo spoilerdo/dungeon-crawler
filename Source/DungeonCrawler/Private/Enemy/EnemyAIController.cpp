@@ -66,6 +66,8 @@ void AEnemyAIController::Move() {
 
 void AEnemyAIController::Attack() {
 	if (Distance <= AttackRange) {
+		IsAttacking = true;
+
 		AMainPlayerCharacter* AttackGoal = Cast<AMainPlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
 		if (AttackGoal) {
 			const int hit = FMath::RandRange(2, 10);
@@ -74,6 +76,10 @@ void AEnemyAIController::Attack() {
 	}
 
 	EndRound();
+}
+
+void AEnemyAIController::DoneAttackingAnim() {
+	IsAttacking = false;
 }
 
 void AEnemyAIController::EndRound() {
