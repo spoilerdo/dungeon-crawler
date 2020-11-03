@@ -141,10 +141,15 @@ void AMainPlayerController::UpdateRenderCustomDepth(const bool& DepthValue) {
 void AMainPlayerController::Attack() {
 	if (CurrentAction != 'A' || AttackGoal == NULL) return;
 
+	IsAttacking = true;
 	const int hit = FMath::RandRange(5, 10);
 	AttackGoal->DoDamage(hit, Damage);
 
 	NextPhase();
+}
+
+void AMainPlayerController::DoneAttackingAnim() {
+	IsAttacking = false;
 }
 
 void AMainPlayerController::NextPhase() {

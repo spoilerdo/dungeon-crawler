@@ -136,6 +136,8 @@ void AMainPlayerCharacter::CalcYaw() {
 
 void AMainPlayerCharacter::DoDamage(const int& hit, const int& damage) {
 	if (hit >= AC) {
+		IsHit = true;
+
 		HP -= damage;
 		DisplayHP();
 		if (AMainPlayerController* PC = Cast<AMainPlayerController>(GetController())) {
@@ -148,6 +150,10 @@ void AMainPlayerCharacter::DoDamage(const int& hit, const int& damage) {
 			Destroy();
 		}
 	}
+}
+
+void AMainPlayerCharacter::DoneDamageAnim() {
+	IsHit = false;
 }
 
 void AMainPlayerCharacter::DisplayHP() {

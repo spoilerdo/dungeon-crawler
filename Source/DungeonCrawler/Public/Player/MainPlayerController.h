@@ -48,13 +48,18 @@ private:
  * Attack system related variables and methods
  */
 public:
-	UPROPERTY(EditAnywhere, Category = "PlayerStats", BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, Category = "Player stats", BlueprintReadWrite)
 	int32 AttackRange;
-	UPROPERTY(EditAnywhere, Category = "PlayerStats", BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, Category = "Player stats", BlueprintReadWrite)
 	int32 Damage;
+	
+	UPROPERTY(BlueprintReadOnly, Category = "Attack system")
+	bool IsAttacking;
+	UFUNCTION(BlueprintCallable, Category = "Attack system")
+	void DoneAttackingAnim();
 
 protected:
-	UFUNCTION(BlueprintCallable, Category = "AttackSystem")
+	UFUNCTION(BlueprintCallable, Category = "Attack system")
 	virtual void Attack() override;
 
 private:
@@ -75,7 +80,7 @@ public:
 	char CurrentAction;
 
 	// Go to the next phase or use it to skip a method
-	UFUNCTION(BlueprintCallable, Category = "PhaseSystem")
+	UFUNCTION(BlueprintCallable, Category = "Phase system")
 	void NextPhase();
 
 	UUIOverlay* UIOverlay;
