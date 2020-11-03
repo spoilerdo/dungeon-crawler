@@ -181,6 +181,10 @@ void AMainPlayerController::DisplayNextPhase(const FString& Phase) {
 	UWidget* skipBtnText = UIOverlay->GetWidgetFromName("SkipButtonText");
 	if(skipBtnText != NULL) Cast<UTextBlock>(skipBtnText)->SetText(FText::FromString("Skip " + Phase));
 
+	// Skip button (make invisible if there is an enemy phase)
+	UWidget* skipBtn = UIOverlay->GetWidgetFromName("SkipButton");
+	if(skipBtn != NULL) Cast<UButton>(skipBtn)->SetVisibility(Phase.Contains("Enemy") ? ESlateVisibility::Hidden : ESlateVisibility::Visible);
+
 	// Text of the animation
 	UWidget* nPhaseText = UIOverlay->GetWidgetFromName("NextPhaseText");
 	if(nPhaseText != NULL) Cast<UTextBlock>(nPhaseText)->SetText(FText::FromString(Phase));
